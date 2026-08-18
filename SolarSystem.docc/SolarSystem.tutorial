@@ -1,0 +1,25 @@
+@Tutorials(name: "SolarSystem") {
+    @Intro(title: "Building an Immersive Solar System") {
+        Learn how to build a visionOS app that places the Sun and planets in a fully immersive space using `RealityView` attachments, and shows an information card when a planet is tapped.
+
+        @Image(source: intro-solar-system.png, alt: "A screenshot of the Vision Pro solar system experience showing planets orbiting the Sun.")
+    }
+
+    @Chapter(name: "Project Setup") {
+        @Image(source: chapter1-icon.png, alt: "An icon representing the project setup chapter.")
+
+        @TutorialReference(tutorial: "doc:01-ProjectSetup")
+    }
+
+    @Chapter(name: "Placing the Planets") {
+        @Image(source: chapter2-icon.png, alt: "An icon representing the planet placement chapter.")
+
+        @TutorialReference(tutorial: "doc:02-PlacingPlanets")
+    }
+
+    @Chapter(name: "Planet Info Cards") {
+        @Image(source: chapter3-icon.png, alt: "An icon representing the planet info card chapter.")
+
+        @TutorialReference(tutorial: "doc:03-PlanetInfoCards")
+    }
+}

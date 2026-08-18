@@ -1,0 +1,79 @@
+@Tutorial(time: 15) {
+    @Intro(title: "Planet Info Cards") {
+        Replace the placeholder label from the previous chapter with `PlanetCardContent`: a view that loads each planet's real 3D model and reveals an info card when tapped.
+
+        @Image(source: 03-intro.png, alt: "A 3D model of a planet with a glass information card floating beside it.")
+    }
+
+    @Section(title: "Load the planet's 3D model") {
+        @ContentAndMedia {
+            `Model3D` loads a named entity from the app's asset bundle asynchronously, showing a placeholder until it's ready.
+
+            @Image(source: 03-01-model3d.png, alt: "A progress spinner turning into a loaded 3D planet model.")
+        }
+
+        @Steps {
+            @Step {
+                Create `PlanetCardContent.swift` in `RealityViews/` with a `name` and `scale` passed in from the caller.
+
+                @Code(file: 03-01-PlanetCardContent.swift, name: "PlanetCardContent.swift")
+            }
+
+            @Step {
+                Load the model with `Model3D(named:bundle:)`, using the planet's name to look it up in the `WorldAssets` bundle and a `ProgressView` as the placeholder. Size it using `scale`, the value `PlanetConfiguration.scale(...)` computed in the previous chapter.
+
+                @Code(file: 03-02-PlanetCardContent.swift, name: "PlanetCardContent.swift")
+            }
+        }
+    }
+
+    @Section(title: "Toggle an info card on tap") {
+        @ContentAndMedia {
+            Tapping the model reveals a card with the planet's name and a short description, pulled from `PlanetInfo`.
+
+            @Image(source: 03-02-tap-card.png, alt: "A hand tapping a planet model, with an information card appearing beside it.")
+        }
+
+        @Steps {
+            @Step {
+                Add an `isCardShown` state property and an `onTapGesture` on the model that toggles it.
+
+                @Code(file: 03-03-PlanetCardContent.swift, name: "PlanetCardContent.swift")
+            }
+
+            @Step {
+                Look up the planet's heading and description with `PlanetInfo.info(for:)`, and show them in an `HStack` alongside the model, with the text itself laid out in a `VStack` with `.glassBackgroundEffect()`, when `isCardShown` is `true`.
+
+                @Code(file: 03-04-PlanetCardContent.swift, name: "PlanetCardContent.swift")
+            }
+
+            @Step {
+                Swap the plain `HStack` for `HStackLayout().depthAlignment(.center)` so the flat card's depth is centered against the model's `.frame(depth:)` volume instead of defaulting to zero depth. This is the completed file.
+
+                @Code(file: 03-05-PlanetCardContent.swift, name: "PlanetCardContent.swift")
+            }
+        }
+    }
+
+    @Section(title: "Wire it into the solar system") {
+        @ContentAndMedia {
+            The last step is swapping the `Text` placeholder in `SolarSystem`'s attachments closure for `PlanetCardContent`, passing each planet's computed scale.
+
+            @Image(source: 03-03-final-scene.png, alt: "The completed immersive solar system with tappable planet cards.")
+        }
+
+        @Steps {
+            @Step {
+                In `SolarSystem`, replace the placeholder `Attachment` content with `PlanetCardContent(name:scale:)`, passing `planet.scale(worldRadiusPerKm:minWorldRadius:maxWorldRadius:)` from `AppModel`. This finished file also updates `model.immersiveSpaceState` and posts an accessibility announcement when the space appears and disappears.
+
+                @Code(file: 03-06-SolarSystem.swift, name: "SolarSystem.swift")
+            }
+
+            @Step {
+                Build and run. Enter the immersive space, tap any planet, and confirm its info card appears beside it and toggles off on a second tap.
+
+                @Image(source: 03-04-complete.png, alt: "The finished app showing a tapped planet with its information card open.")
+            }
+        }
+    }
+}

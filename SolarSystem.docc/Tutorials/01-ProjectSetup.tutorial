@@ -1,0 +1,85 @@
+@Tutorial(time: 15) {
+    @Intro(title: "Setting Up the Project") {
+        Create a new visionOS app, add a fully immersive space alongside the main window, and sketch out the app-wide state model that later chapters will build on.
+
+        @Image(source: 01-intro.png, alt: "A blank visionOS project window next to an empty immersive space icon.")
+    }
+
+    @Section(title: "Create the Xcode project") {
+        @ContentAndMedia {
+            Start from Xcode's visionOS App template so the project already wires up a `WindowGroup`, an immersive space entry point, and a RealityKit content package.
+
+            @Image(source: 01-01-new-project.png, alt: "The Xcode new project sheet with the visionOS App template selected.")
+        }
+
+        @Steps {
+            @Step {
+                Open Xcode and choose **File > New > Project**, select the **visionOS** tab, and pick the **App** template.
+
+                @Image(source: 01-01-new-project.png, alt: "The visionOS App template selected in Xcode's new project sheet.")
+            }
+
+            @Step {
+                Name the project **SolarSystem**, set the Initial Scene to **Window**, and set the Immersive Space Renderer to **RealityKit**.
+
+                @Image(source: 01-02-project-options.png, alt: "Project options showing the product name SolarSystem and RealityKit immersive space renderer.")
+            }
+
+            @Step {
+                Build and run on the Apple Vision Pro simulator or device to confirm the empty template launches.
+
+                @Image(source: 01-03-empty-run.png, alt: "The default empty visionOS window running in the simulator.")
+            }
+        }
+    }
+
+    @Section(title: "Add the immersive space") {
+        @ContentAndMedia {
+            `SolarSystemApp` needs a `WindowGroup` for the entry window and an `ImmersiveSpace` that will later host the Sun and planets. Both share one `AppModel` instance through the environment.
+
+            @Image(source: 01-04-app-scene.png, alt: "A diagram of a WindowGroup and an ImmersiveSpace both reading from one shared AppModel.")
+        }
+
+        @Steps {
+            @Step {
+                Open `SolarSystemApp.swift` and replace its contents with the `@main` app struct that will grow throughout this tutorial.
+
+                @Code(file: 01-04-SolarSystemApp.swift, name: "SolarSystemApp.swift")
+            }
+
+            @Step {
+                Add an `@State` property for `AppModel` and inject it into the `WindowGroup` with `.environment(model)`.
+
+                @Code(file: 01-05-SolarSystemApp.swift, name: "SolarSystemApp.swift")
+            }
+
+            @Step {
+                Add an `ImmersiveSpace` scene that reads its id from `model.immersiveSpaceID`, and set its `immersionStyle` to `.full`. This is where the solar system will render once you build it in the next chapter.
+
+                @Code(file: 01-06-SolarSystemApp.swift, name: "SolarSystemApp.swift")
+            }
+        }
+    }
+
+    @Section(title: "Sketch the AppModel skeleton") {
+        @ContentAndMedia {
+            `AppModel` is the single source of truth for the app. For now it only needs to track whether the immersive space is open, but this is the type every later chapter's state will hang off of.
+
+            @Image(source: 01-07-appmodel.png, alt: "A diagram showing AppModel as the shared source of truth between the window and the immersive space.")
+        }
+
+        @Steps {
+            @Step {
+                Create a new file named `AppModel.swift` inside `Model/` and mark the class `@Observable` so SwiftUI views can read its properties directly.
+
+                @Code(file: 01-07-AppModel.swift, name: "AppModel.swift")
+            }
+
+            @Step {
+                Add an `immersiveSpaceID` constant and an `ImmersiveSpaceState` enum with `closed`, `inTransition`, and `open` cases. The `inTransition` case exists so a toggle button can disable itself mid-transition instead of racing a second tap.
+
+                @Code(file: 01-08-AppModel.swift, name: "AppModel.swift")
+            }
+        }
+    }
+}
