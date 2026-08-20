@@ -1,0 +1,507 @@
+<!--
+  DocC injects this file into index.html as <template id="custom-header">, which
+  swift-docc-render clones into a *shadow root*. Styles placed here would be
+  scoped to that shadow root, so instead we run a small script that appends a
+  stylesheet to document.head.
+
+  What it does, on tutorial pages at >= 1024px:
+    - turns the horizontal tutorial nav bar into a left navigator rail
+    - the rail reuses the chapter/tutorial/section tree DocC already renders for
+      the collapsed nav (.mobile-dropdown), so every row stays a real router link
+    - adds a title header with a sidebar toggle, and a filter field
+    - forces the dark palette and flattens every background to black
+
+  Requires: docc convert/preview --experimental-enable-custom-templates
+-->
+<script>
+(function () {
+  var STYLE_ID = 'solarsystem-tutorial-rail';
+
+  function icon(svg) {
+    return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+
+  var DOC_ICON = icon(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14">'
+    + '<path d="M8.2 1.5H4A1.5 1.5 0 0 0 2.5 3v8A1.5 1.5 0 0 0 4 12.5h6A1.5 1.5 0 0 0 11.5 11V4.8z"'
+    + ' fill="none" stroke="#000" stroke-width="1.1" stroke-linejoin="round"/>'
+    + '<path d="M8.2 1.5v3.3h3.3" fill="none" stroke="#000" stroke-width="1.1" stroke-linejoin="round"/>'
+    + '</svg>');
+
+  var STEP_ICON = icon(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14">'
+    + '<rect x="2.5" y="3" width="9" height="8" rx="1.2" fill="none" stroke="#000" stroke-width="1.1"/>'
+    + '<path d="M4.6 5.6h4.8M4.6 8.4h3.2" stroke="#000" stroke-width="1.1" stroke-linecap="round"/>'
+    + '</svg>');
+
+  var SIDEBAR_ICON = icon(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16">'
+    + '<rect x="1.5" y="2" width="15" height="12" rx="2" fill="none" stroke="#000" stroke-width="1.4"/>'
+    + '<path d="M7 2v12" stroke="#000" stroke-width="1.4"/>'
+    + '<rect x="2.6" y="3.1" width="3.3" height="9.8" rx="1" fill="#000"/>'
+    + '</svg>');
+
+  var FILTER_ICON = icon(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14">'
+    + '<path d="M2 4h10M3.5 7h7M5.5 10h3" stroke="#000" stroke-width="1.2" stroke-linecap="round"/>'
+    + '</svg>');
+
+  var css = `
+/* The <custom-header> host is only a carrier for this script. Left visible it
+   would still generate an empty line box above the page. */
+custom-header { display: none !important; }
+
+/* ================= all-black palette ================= */
+body,
+body[data-color-scheme="light"],
+body[data-color-scheme="dark"],
+body[data-color-scheme="auto"] {
+  --color-tutorial-background: #000;
+  --color-step-background: #000;
+  --color-fill-secondary: #000;
+  --color-fill-gray-secondary: #000;
+  --color-code-background: #000;
+  --color-tutorial-assessments-background: #000;
+  --color-runtime-preview-background: #000;
+  /* hover / raised surfaces stay a hair off black so they remain readable */
+  --color-fill-tertiary: #1c1c1e;
+  --color-fill-quaternary: #1c1c1e;
+
+  --tut-rail-w: 260px;
+  --tut-rail-line: rgba(255, 255, 255, 0.16);
+  --tut-rail-heading: #98989d;
+  --tut-rail-row: #e8e8ed;
+  --tut-rail-row-muted: #c7c7cc;
+  --tut-rail-hover: rgba(255, 255, 255, 0.07);
+  --tut-rail-selected: #1c3f94;
+}
+html, body { background: #000 !important; }
+
+/* the injected rail chrome only exists for the rail layout below */
+.tut-rail-toggle, .tut-rail-filter { display: none; }
+
+/* the color scheme switcher is meaningless once dark is forced */
+#app .color-scheme-toggle, #app .footer-current-year ~ * .color-scheme-toggle { display: none !important; }
+
+/* ================= the rail ================= */
+@media only screen and (min-width: 1024px) {
+  #app .tutorial > .nav {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: var(--tut-rail-w) !important;
+    height: 100vh !important;
+    min-width: 0 !important;
+    background: #000 !important;
+  }
+  #app .tutorial > .nav .nav__wrapper { height: 100% !important; }
+  #app .tutorial > .nav .nav__background {
+    height: 100% !important;
+    background: #000 !important;
+  }
+  /* the nav keyline is a bottom border by default — stand it up on the right */
+  #app .tutorial > .nav .nav__background::after {
+    top: 0 !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: 0 !important;
+    transform: none !important;
+    width: 1px !important;
+    height: 100% !important;
+    background-color: var(--tut-rail-line) !important;
+  }
+
+  #app .tutorial > .nav .nav-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    height: 100vh !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ---- header: root title + sidebar toggle ---- */
+  #app .tutorial > .nav .nav-title {
+    order: 1;
+    flex: none;
+    grid-column: auto !important;
+    width: 100% !important;
+    box-sizing: border-box;
+    padding: 13px 48px 13px 16px !important;
+    border-bottom: 1px solid var(--tut-rail-line);
+    line-height: 1.3;
+  }
+  #app .tutorial > .nav .nav-title-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  #app .tutorial > .nav .nav-title .title {
+    display: block !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    font-weight: 600;
+    color: #f5f5f7;
+  }
+  #app .tutorial > .nav .nav-title .subhead {
+    display: block !important;
+    color: var(--tut-rail-heading);
+  }
+
+  .tut-rail-toggle {
+    display: flex;
+    position: fixed;
+    top: 10px;
+    left: max(8px, calc(var(--tut-rail-w) - 42px));
+    z-index: 9998;
+    width: 30px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+  .tut-rail-toggle:hover { background: var(--tut-rail-hover); }
+  .tut-rail-toggle::before {
+    content: "";
+    display: block;
+    width: 18px;
+    height: 16px;
+    background-color: #d0d0d5;
+    -webkit-mask-image: ${SIDEBAR_ICON};
+    mask-image: ${SIDEBAR_ICON};
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+  }
+
+  /* ---- the tree ---- */
+  /* DocC already renders the chapter > tutorial > section tree for its collapsed
+     nav; show that instead of the two dropdowns. */
+  #app .tutorial > .nav .separator { display: none !important; }
+  #app .tutorial > .nav .dropdown-container { display: none !important; }
+  #app .tutorial > .nav .nav-actions { display: none !important; }
+  #app .tutorial > .nav .mobile-dropdown-container { display: block !important; }
+
+  #app .tutorial > .nav .nav-menu {
+    order: 2;
+    grid-column: auto !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  #app .tutorial > .nav .nav-menu-tray {
+    display: block !important;
+    width: 100% !important;
+    max-height: none !important;
+    visibility: visible !important;
+    overflow: visible !important;
+  }
+  /* NavMenuItems lays its children out in a flex row — stack them instead */
+  #app .tutorial > .nav .mobile-dropdown {
+    display: block !important;
+    width: 100% !important;
+    padding: 8px 0 24px !important;
+    margin: 0 !important;
+  }
+  #app .tutorial > .nav .mobile-dropdown .nav-menu-item {
+    margin: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  #app .tutorial > .nav .mobile-dropdown .chapter-list {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  #app .tutorial > .nav .mobile-dropdown .chapter-list:last-child .tutorial-list:last-child {
+    padding-bottom: 0 !important;
+  }
+  #app .tutorial > .nav .mobile-dropdown .chapter-name {
+    margin: 0 !important;
+    padding: 14px 16px 4px !important;
+    font-size: 12px !important;
+    line-height: 16px !important;
+    font-weight: 600 !important;
+    color: var(--tut-rail-heading) !important;
+  }
+  #app .tutorial > .nav .mobile-dropdown .tutorial-list,
+  #app .tutorial > .nav .mobile-dropdown .section-list {
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+  }
+  #app .tutorial > .nav .mobile-dropdown .option {
+    display: flex !important;
+    align-items: flex-start;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 5px 16px !important;
+    font-size: 13px !important;
+    line-height: 20px !important;
+    font-weight: 400 !important;
+    color: var(--tut-rail-row) !important;
+    text-decoration: none !important;
+  }
+  #app .tutorial > .nav .mobile-dropdown .option::before {
+    content: "";
+    flex: none;
+    width: 14px;
+    height: 14px;
+    /* keep the icon on the first line when a long title wraps */
+    margin-top: 3px;
+    background-color: currentColor;
+    opacity: 0.75;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+  }
+  #app .tutorial > .nav .mobile-dropdown .option.tutorial::before {
+    -webkit-mask-image: ${DOC_ICON};
+    mask-image: ${DOC_ICON};
+  }
+  #app .tutorial > .nav .mobile-dropdown .option.section {
+    padding-left: 36px !important;
+    font-size: 12.5px !important;
+    color: var(--tut-rail-row-muted) !important;
+  }
+  #app .tutorial > .nav .mobile-dropdown .option.section::before {
+    -webkit-mask-image: ${STEP_ICON};
+    mask-image: ${STEP_ICON};
+  }
+  #app .tutorial > .nav .mobile-dropdown .option:hover {
+    background: var(--tut-rail-hover);
+  }
+  #app .tutorial > .nav .mobile-dropdown .option.router-link-exact-active,
+  #app .tutorial > .nav .mobile-dropdown .option.section.active {
+    background: var(--tut-rail-selected) !important;
+    color: #fff !important;
+    font-weight: 500 !important;
+  }
+  #app .tutorial > .nav .mobile-dropdown .option.router-link-exact-active::before,
+  #app .tutorial > .nav .mobile-dropdown .option.section.active::before {
+    opacity: 1;
+  }
+  /* the current tutorial row stays a plain row — the section below it is what is
+     actually selected, so only highlight it when no section is active */
+  #app .tutorial > .nav .mobile-dropdown .tutorial-list-item:has(.option.section.active)
+    > .option.router-link-exact-active {
+    background: transparent !important;
+    color: var(--tut-rail-row) !important;
+    font-weight: 600 !important;
+  }
+
+  /* ---- filter ---- */
+  .tut-rail-filter {
+    order: 3;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px;
+    border-top: 1px solid var(--tut-rail-line);
+  }
+  .tut-rail-filter-field {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .tut-rail-filter-field::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin-top: -7px;
+    background-color: #8e8e93;
+    -webkit-mask-image: ${FILTER_ICON};
+    mask-image: ${FILTER_ICON};
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    pointer-events: none;
+  }
+  .tut-rail-filter input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 34px;
+    margin: 0;
+    padding: 0 10px 0 32px;
+    font-size: 13px;
+    color: #f5f5f7;
+    background: #0e0e0e;
+    border: 1px solid var(--tut-rail-line);
+    border-radius: 6px;
+    outline: none;
+  }
+  .tut-rail-filter input::placeholder { color: #8e8e93; }
+  .tut-rail-filter input:focus { border-color: #3b6fd4; }
+  .tut-rail-filter kbd {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    font-family: inherit;
+    font-size: 13px;
+    color: #c7c7cc;
+    background: transparent;
+    border: 1px solid var(--tut-rail-line);
+    border-radius: 6px;
+  }
+
+  /* ---- collapsed ---- */
+  /* --tut-rail-w is declared on body, so the override has to outrank it there */
+  html.tut-rail-collapsed body { --tut-rail-w: 0px; }
+  html.tut-rail-collapsed #app .tutorial > .nav { width: 0 !important; overflow: hidden; }
+
+  /* ---- move the split view out from under the rail ---- */
+  #app .tutorial { padding-left: var(--tut-rail-w); }
+  /* the asset column is sized off the viewport (50vw + overlap), so pull it back
+     by half the rail width to keep its right edge flush with the page */
+  #app .tutorial .steps > .asset-container {
+    width: calc(50vw + 8.3333% - (var(--tut-rail-w) / 2)) !important;
+    top: 0 !important;
+    height: 100vh !important;
+  }
+}
+`;
+
+  /* ---------- stylesheet ---------- */
+  if (!document.getElementById(STYLE_ID)) {
+    var style = document.createElement('style');
+    style.id = STYLE_ID;
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
+  /* ---------- force the dark palette ---------- */
+  function forceDark() {
+    if (document.body && document.body.getAttribute('data-color-scheme') !== 'dark') {
+      document.body.setAttribute('data-color-scheme', 'dark');
+    }
+  }
+  forceDark();
+  if (document.body) {
+    new MutationObserver(forceDark).observe(document.body, {
+      attributes: true,
+      attributeFilter: ['data-color-scheme']
+    });
+  }
+
+  /* ---------- rail chrome: toggle + filter ---------- */
+  function applyFilter(root, query) {
+    var q = query.trim().toLowerCase();
+    var chapters = root.querySelectorAll('.chapter-list');
+    for (var i = 0; i < chapters.length; i++) {
+      var chapter = chapters[i];
+      var nameEl = chapter.querySelector('.chapter-name');
+      var chapterMatches = !q || (nameEl && nameEl.textContent.toLowerCase().indexOf(q) > -1);
+      var chapterVisible = false;
+
+      var items = chapter.querySelectorAll('.tutorial-list-item');
+      for (var j = 0; j < items.length; j++) {
+        var item = items[j];
+        var link = item.querySelector('a.option.tutorial');
+        var titleMatches = chapterMatches
+          || (link && link.textContent.toLowerCase().indexOf(q) > -1);
+        var sectionVisible = false;
+
+        var sections = item.querySelectorAll('.section-list > li');
+        for (var k = 0; k < sections.length; k++) {
+          var matches = titleMatches
+            || sections[k].textContent.toLowerCase().indexOf(q) > -1;
+          sections[k].style.display = matches ? '' : 'none';
+          if (matches) sectionVisible = true;
+        }
+
+        var show = titleMatches || sectionVisible;
+        item.style.display = show ? '' : 'none';
+        if (show) chapterVisible = true;
+      }
+      chapter.style.display = chapterVisible ? '' : 'none';
+    }
+  }
+
+  function enhance() {
+    var content = document.querySelector('.tutorial > .nav .nav-content');
+    if (!content) return;
+
+    if (!content.querySelector('.tut-rail-toggle')) {
+      var toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'tut-rail-toggle';
+      toggle.setAttribute('aria-label', 'Toggle navigator');
+      toggle.addEventListener('click', function () {
+        document.documentElement.classList.toggle('tut-rail-collapsed');
+      });
+      content.appendChild(toggle);
+    }
+
+    if (!content.querySelector('.tut-rail-filter')) {
+      var bar = document.createElement('div');
+      bar.className = 'tut-rail-filter';
+
+      var field = document.createElement('div');
+      field.className = 'tut-rail-filter-field';
+
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = 'Filter';
+      input.setAttribute('aria-label', 'Filter tutorials and sections');
+      input.addEventListener('input', function () {
+        var tree = document.querySelector('.tutorial > .nav .mobile-dropdown');
+        if (tree) applyFilter(tree, input.value);
+      });
+
+      var hint = document.createElement('kbd');
+      hint.textContent = '/';
+
+      field.appendChild(input);
+      bar.appendChild(field);
+      bar.appendChild(hint);
+      content.appendChild(bar);
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
+        var active = document.activeElement;
+        var tag = active && active.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || (active && active.isContentEditable)) return;
+        if (!document.body.contains(input)) return;
+        event.preventDefault();
+        input.focus();
+        input.select();
+      });
+    }
+  }
+
+  enhance();
+  new MutationObserver(enhance).observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
+})();
+</script>
