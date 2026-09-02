@@ -1,15 +1,11 @@
 @Tutorial(time: 20) {
     @Intro(title: "Placing the Planets") {
-        Model each planet's orbit as data, populate `AppModel` with the eight planets of the solar system, and place them around the Sun using a `RealityView` with SwiftUI attachments.
-
-        @Image(source: 02-intro.png, alt: "A diagram of eight planets arranged in a circle around a central Sun.")
+        Model each planet's orbit as data, populate `AppModel` with the eight planet assets you imported into `WorldAssets`, and place them around the Sun using a `RealityView` with SwiftUI attachments.
     }
 
     @Section(title: "Model a planet's orbit") {
         @ContentAndMedia {
             `PlanetConfiguration` turns a planet's real-world radius and orbit angle into the polar-coordinate position and scale factor RealityKit needs.
-
-            @Image(source: 02-01-orbit-diagram.png, alt: "A polar coordinate diagram showing distance and angle from the Sun.")
         }
 
         @Steps {
@@ -22,13 +18,13 @@
             @Step {
                 Add `position(around:spacingPerOrder:)`. It multiplies the planet's `order` by a fixed spacing to get its distance from the Sun, then converts distance and angle into an `xz`-plane offset using a polar-to-Cartesian conversion.
 
-                @Code(file: 02-02-PlanetConfiguration.swift, name: "PlanetConfiguration.swift")
+                @Code(file: 02-02-PlanetConfiguration.swift, name: "PlanetConfiguration.swift", previousFile: 02-01-PlanetConfiguration.swift)
             }
 
             @Step {
                 Add `scale(worldRadiusPerKm:minWorldRadius:maxWorldRadius:)`. It converts the planet's real radius to world space, clamps it so Mercury doesn't disappear and Jupiter doesn't dominate the scene, then normalizes it against the 3D asset's own radius.
 
-                @Code(file: 02-03-PlanetConfiguration.swift, name: "PlanetConfiguration.swift")
+                @Code(file: 02-03-PlanetConfiguration.swift, name: "PlanetConfiguration.swift", previousFile: 02-02-PlanetConfiguration.swift)
             }
         }
     }
@@ -36,21 +32,19 @@
     @Section(title: "Add the planets to AppModel") {
         @ContentAndMedia {
             With `PlanetConfiguration` defined, `AppModel` can hold the Sun's position and an array describing all eight planets, along with the spacing and scaling constants that `position(around:spacingPerOrder:)` and `scale(worldRadiusPerKm:minWorldRadius:maxWorldRadius:)` expect.
-
-            @Image(source: 02-02-planet-list.png, alt: "A list of eight planet names with their orbit order and radius values.")
         }
 
         @Steps {
             @Step {
-                In `AppModel`, add `solarSunPosition`, along with the spacing and scale constants `spacingPerOrder`, `worldRadiusPerKm`, `minPlanetScale`, and `maxPlanetScale`.
+                Reopen `AppModel.swift` from the previous chapter and add `solarSunPosition`, along with the spacing and scale constants `spacingPerOrder`, `worldRadiusPerKm`, `minPlanetScale`, and `maxPlanetScale`.
 
-                @Code(file: 02-04-AppModel.swift, name: "AppModel.swift")
+                @Code(file: 02-04-AppModel.swift, name: "AppModel.swift", previousFile: 01-08-AppModel.swift)
             }
 
             @Step {
                 Add `solarPlanets`, an array of `PlanetConfiguration` covering Mercury through Neptune. Earth's `baseAssetRadius` is overridden because its 3D asset isn't modeled at the same relative scale as the others.
 
-                @Code(file: 02-04-AppModel.swift, name: "AppModel.swift")
+                @Code(file: 02-05-AppModel.swift, name: "AppModel.swift", previousFile: 02-04-AppModel.swift)
             }
         }
     }
@@ -58,27 +52,23 @@
     @Section(title: "Place attachments in a RealityView") {
         @ContentAndMedia {
             `SolarSystem` already renders the Sun and a starfield backdrop using the provided `Sun` and `Starfield` views. Now give it a `RealityView` that loops over `model.solarPlanets` and positions one SwiftUI attachment per planet.
-
-            @Image(source: 02-03-attachments.png, alt: "A RealityView diagram showing SwiftUI attachments positioned around a 3D Sun entity.")
         }
 
         @Steps {
             @Step {
                 Start from the provided `SolarSystem` view, which renders `Sun` and `Starfield` inside a `ZStack`.
 
-                @Code(file: 02-05-SolarSystem.swift, name: "SolarSystem.swift")
+                @Code(file: 02-06-SolarSystem.swift, name: "SolarSystem.swift")
             }
 
             @Step {
                 Add a `RealityView` with an `attachments` closure. For each planet, create an `Attachment` keyed by `planet.name`; in the content closure, look it up with `attachments.entity(for:)`, set its `position` using `PlanetConfiguration.position(around:spacingPerOrder:)`, and add it to the scene. A plain `Text` stands in for the planet's content until the next chapter.
 
-                @Code(file: 02-06-SolarSystem.swift, name: "SolarSystem.swift")
+                @Code(file: 02-07-SolarSystem.swift, name: "SolarSystem.swift", previousFile: 02-06-SolarSystem.swift)
             }
 
             @Step {
                 Run the app and enter the immersive space. Eight text labels should appear in a ring around the Sun, each at the distance and angle its `PlanetConfiguration` describes.
-
-                @Image(source: 02-04-labels-in-space.png, alt: "Eight text labels arranged in a ring around a glowing sun in the immersive space.")
             }
         }
     }

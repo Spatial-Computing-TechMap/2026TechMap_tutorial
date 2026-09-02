@@ -13,4 +13,10 @@ class AppModel {
         case open
     }
     var immersiveSpaceState = ImmersiveSpaceState.closed
+
+    /// Whether the solar system module is currently visible.
+    var isShowingSolar = false
+
+    /// The scale applied to the Sun entity in SolarSystem.swift.
+    var solarSunScale: Float = 50
 }

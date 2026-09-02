@@ -1,22 +1,20 @@
-@Tutorial(time: 15) {
+@Tutorial(time: 25) {
     @Intro(title: "Setting Up the Project") {
-        Create a new visionOS app, add a fully immersive space alongside the main window, and sketch out the app-wide state model that later chapters will build on.
-
-        @Image(source: 01-intro.png, alt: "A blank visionOS project window next to an empty immersive space icon.")
+        Create a new visionOS app, import the solar system's 3D assets through a Reality Composer Pro package, add a fully immersive space, and sketch out the app-wide state model that later chapters will build on.
     }
 
     @Section(title: "Create the Xcode project") {
         @ContentAndMedia {
-            Start from Xcode's visionOS App template so the project already wires up a `WindowGroup`, an immersive space entry point, and a RealityKit content package.
+            Start from Xcode's visionOS App template so the project already wires up a `WindowGroup`, an immersive space entry point, and a default Reality Composer Pro package named `RealityKitContent`.
 
-            @Image(source: 01-01-new-project.png, alt: "The Xcode new project sheet with the visionOS App template selected.")
+            The first two steps show screenshots because you make these choices in Xcode's new project sheet rather than by editing source. Every later step shows code instead.
         }
 
         @Steps {
             @Step {
                 Open Xcode and choose **File > New > Project**, select the **visionOS** tab, and pick the **App** template.
 
-                @Image(source: 01-01-new-project.png, alt: "The visionOS App template selected in Xcode's new project sheet.")
+                @Image(source: 01-01-visionos-template.png, alt: "Xcode's new project sheet with the visionOS tab open and the App template selected.")
             }
 
             @Step {
@@ -26,9 +24,41 @@
             }
 
             @Step {
-                Build and run on the Apple Vision Pro simulator or device to confirm the empty template launches.
+                In the Project navigator, expand **Packages > RealityKitContent**. Confirm that the generated package contains `Package.swift`, `Package.realitycomposerpro`, and `Sources/RealityKitContent`. The next section creates a second package with this same structure for the solar system assets.
+            }
+        }
+    }
 
-                @Image(source: 01-03-empty-run.png, alt: "The default empty visionOS window running in the simulator.")
+    @Section(title: "Add the WorldAssets package and 3D models") {
+        @ContentAndMedia {
+            Keep the Sun and planet models in a dedicated Reality Composer Pro Swift package named `WorldAssets`. The package name becomes the Swift module name used by `import WorldAssets`, and the generated `worldAssetsBundle` constant gives RealityKit access to its compiled resources.
+
+            Each step below shows what it produces, so you can check your own package against it before moving on.
+        }
+
+        @Steps {
+            @Step {
+                In Xcode, choose **Xcode > Open Developer Tool > Reality Composer Pro**. In the welcome window, choose **Create New Project**, name it **WorldAssets**, and save it inside the app project's `Packages/` folder, next to the template's `RealityKitContent`. Then open `Package.realitycomposerpro`, choose **File > Import File**, and import the team-provided Sun and eight planet models — or equivalent models you have permission to use — as USD or USDZ assets.
+
+                Name the imported entity assets exactly `Sun`, `Mercury`, `Venus`, `Earth`, `Mars`, `Jupiter`, `Saturn`, `Uranus`, and `Neptune` — the names are case-sensitive because later code passes each one straight to `Model3D`. For more detail on this workflow, see [Creating a Reality Composer Pro package in your app](https://developer.apple.com/documentation/realitycomposerpro/creating-a-reality-composer-pro-package-in-your-app).
+
+                @Image(source: 01-03-worldassets-navigator.png, alt: "Xcode's Project navigator with Packages expanded, showing the WorldAssets package next to RealityKitContent and the nine named entity assets inside WorldAssets.rkassets.")
+            }
+
+            @Step {
+                Back in Xcode, Control-click the project at the top of the Project navigator and choose **Add Files to “SolarSystem”…**. Select the whole `WorldAssets` folder — the one containing `Package.swift` — and click **Add**. Because the folder contains a `Package.swift`, Xcode adds it as a local Swift package rather than a plain group, and **WorldAssets** appears under **Packages**.
+
+                Then select the **SolarSystem** app target, open **General > Frameworks, Libraries, and Embedded Content**, and add the **WorldAssets** library if Xcode hasn't linked it automatically. The library product declared in this file — not the folder name — is what `import WorldAssets` resolves to.
+
+                @Code(file: 01-WorldAssets-Package.swift, name: "Packages/WorldAssets/Package.swift")
+            }
+
+            @Step {
+                Open `Sources/WorldAssets/WorldAssets.swift` and confirm the package exposes its compiled resource bundle through a public `worldAssetsBundle` constant. Add the constant if your generated file doesn't already contain it.
+
+                Build once and don't continue until a file containing `import WorldAssets` compiles. If Xcode reports **No such module 'WorldAssets'**, the folder was added as an ordinary group or the library isn't linked to the app target — redo the previous step.
+
+                @Code(file: 01-WorldAssets.swift, name: "Sources/WorldAssets/WorldAssets.swift")
             }
         }
     }
@@ -36,8 +66,6 @@
     @Section(title: "Add the immersive space") {
         @ContentAndMedia {
             `SolarSystemApp` needs a `WindowGroup` for the entry window and an `ImmersiveSpace` that will later host the Sun and planets. Both share one `AppModel` instance through the environment.
-
-            @Image(source: 01-04-app-scene.png, alt: "A diagram of a WindowGroup and an ImmersiveSpace both reading from one shared AppModel.")
         }
 
         @Steps {
@@ -50,22 +78,20 @@
             @Step {
                 Add an `@State` property for `AppModel` and inject it into the `WindowGroup` with `.environment(model)`.
 
-                @Code(file: 01-05-SolarSystemApp.swift, name: "SolarSystemApp.swift")
+                @Code(file: 01-05-SolarSystemApp.swift, name: "SolarSystemApp.swift", previousFile: 01-04-SolarSystemApp.swift)
             }
 
             @Step {
                 Add an `ImmersiveSpace` scene that reads its id from `model.immersiveSpaceID`, and set its `immersionStyle` to `.full`. This is where the solar system will render once you build it in the next chapter.
 
-                @Code(file: 01-06-SolarSystemApp.swift, name: "SolarSystemApp.swift")
+                @Code(file: 01-06-SolarSystemApp.swift, name: "SolarSystemApp.swift", previousFile: 01-05-SolarSystemApp.swift)
             }
         }
     }
 
     @Section(title: "Sketch the AppModel skeleton") {
         @ContentAndMedia {
-            `AppModel` is the single source of truth for the app. For now it only needs to track whether the immersive space is open, but this is the type every later chapter's state will hang off of.
-
-            @Image(source: 01-07-appmodel.png, alt: "A diagram showing AppModel as the shared source of truth between the window and the immersive space.")
+            `AppModel` is the single source of truth for the app. Start with the immersive-space lifecycle state, whether the solar experience is visible, and the scale used by the Sun model. Later chapters add the planets and layout constants to this same type.
         }
 
         @Steps {
@@ -78,7 +104,9 @@
             @Step {
                 Add an `immersiveSpaceID` constant and an `ImmersiveSpaceState` enum with `closed`, `inTransition`, and `open` cases. The `inTransition` case exists so a toggle button can disable itself mid-transition instead of racing a second tap.
 
-                @Code(file: 01-08-AppModel.swift, name: "AppModel.swift")
+                Also add `isShowingSolar` and `solarSunScale`. `SolarSystem.swift` reads `model.solarSunScale` in the next chapter and writes `model.isShowingSolar` in the one after, so declaring both here is what keeps those files compiling.
+
+                @Code(file: 01-08-AppModel.swift, name: "AppModel.swift", previousFile: 01-07-AppModel.swift)
             }
         }
     }
