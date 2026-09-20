@@ -200,7 +200,7 @@
                 일반 `overlay`와 달리 진짜 깊이 방향으로 콘텐츠를 배치하고, 부모 뷰의
                 경계 안에 자동으로 맞춰 줍니다. 기존 `VStack`의 텍스트와 버튼은 한 줄도
                 바뀌지 않습니다.
-                @Code(name: "05-08-PlanetInfoPanel.swift", file: "05-08-PlanetInfoPanel.swift")
+                @Code(name: "PlanetInfoPanel.swift", file: "05-08-PlanetInfoPanel.swift", previousFile: "05-01-PlanetInfoPanel.swift")
             }
 
             @Step {
@@ -212,7 +212,7 @@
                 > Note: 각도가 0이 아닌 회전은 반드시 겉모습을 바꿉니다. 지금처럼 "새
                 > 콘텐츠를 추가하는" 자리에는 어울리지만, 기존 레이아웃의 겉모습을 그대로
                 > 유지해야 하는 자리에는 어울리지 않습니다.
-                @Code(name: "05-08-PlanetInfoPanel.swift", file: "05-08-PlanetInfoPanel.swift")
+                @Code(name: "PlanetInfoPanel.swift", file: "05-09-PlanetInfoPanel.swift", previousFile: "05-08-PlanetInfoPanel.swift")
             }
         }
     }

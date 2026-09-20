@@ -71,6 +71,7 @@ struct PlanetInfoPanel: View {
                 ProgressView()
             }
             .frame(width: 120, height: 120)
+            .rotation3DLayout(.degrees(-20), axis: .y)
             .padding(24)
         }
     }
