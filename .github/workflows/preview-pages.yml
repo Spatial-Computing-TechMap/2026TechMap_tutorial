@@ -1,0 +1,52 @@
+name: Preview DocC on a personal fork
+
+# Builds and publishes the tutorial_v2 branch to the Pages site of a *personal*
+# copy of this repository, so the organization's live site stays untouched.
+#
+# The guard below means this never runs on the organization repository, even
+# after tutorial_v2 is merged into main. Deployment there stays the job of
+# deploy-docs.yml, which only fires on main.
+
+on:
+  push:
+    branches: [tutorial_v2]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository_owner != 'Spatial-Computing-TechMap'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Build DocC
+        # repository.txt keeps pointing at the organization repository: it
+        # supplies both the base path (the name matches this fork) and the
+        # release that hosts SolarSystem-Assets.zip.
+        run: ./scripts/build-docs.sh
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .build/SolarSystem.doccarchive
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
