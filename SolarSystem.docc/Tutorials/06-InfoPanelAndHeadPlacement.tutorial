@@ -187,6 +187,36 @@
         }
     }
 
+    @Section(title: "한 걸음 더: SwiftUI Spatial Layout으로 패널 다듬기") {
+        @ContentAndMedia {
+            visionOS 26은 SwiftUI에 새로운 3차원 레이아웃 도구를 추가했습니다. 그중
+            `spatialOverlay`와 `rotation3DLayout`을 이 패널에 적용해서, 지금 만든
+            기능은 그대로 두고 행성 미리보기 하나만 더해 봅니다.
+        }
+
+        @Steps {
+            @Step {
+                패널 위에 이 행성의 작은 3D 모델을 겹쳐 올립니다. `spatialOverlay`는
+                일반 `overlay`와 달리 진짜 깊이 방향으로 콘텐츠를 배치하고, 부모 뷰의
+                경계 안에 자동으로 맞춰 줍니다. 기존 `VStack`의 텍스트와 버튼은 한 줄도
+                바뀌지 않습니다.
+                @Code(name: "05-08-PlanetInfoPanel.swift", file: "05-08-PlanetInfoPanel.swift")
+            }
+
+            @Step {
+                모델을 시선 쪽으로 살짝 돌립니다. `rotation3DLayout`은 오래된
+                `rotation3DEffect`와 달리 회전된 바운딩 박스를 레이아웃 시스템에 그대로
+                알려 주므로, 모델이 돌아간 만큼 `spatialOverlay`가 차지하는 공간도 정확히
+                커져서 패널을 침범하지 않습니다.
+
+                > Note: 각도가 0이 아닌 회전은 반드시 겉모습을 바꿉니다. 지금처럼 "새
+                > 콘텐츠를 추가하는" 자리에는 어울리지만, 기존 레이아웃의 겉모습을 그대로
+                > 유지해야 하는 자리에는 어울리지 않습니다.
+                @Code(name: "05-08-PlanetInfoPanel.swift", file: "05-08-PlanetInfoPanel.swift")
+            }
+        }
+    }
+
     @Section(title: "막히면 확인하세요") {
         @ContentAndMedia {
             이 챕터에서 자주 겪는 문제입니다.
