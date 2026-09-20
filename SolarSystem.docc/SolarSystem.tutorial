@@ -1,19 +1,76 @@
 @Tutorials(name: "SolarSystem") {
-    @Intro(title: "Building an Immersive Solar System") {
-        Learn how to build a visionOS app that places the Sun and planets in a fully immersive space using `RealityView` attachments, and shows an information card when a planet is tapped.
+    @Intro(title: "visionOS로 태양계 만들기") {
+        Apple Vision Pro에서 눈앞에 태양계를 펼치는 앱을 처음부터 만들어 봅니다.
 
-        Follow the chapters in order: **Project Setup** creates the visionOS project, links the `WorldAssets` 3D asset package, and defines shared app state; **Placing the Planets** models the eight planets and lays them out around the Sun; **Planet Info Cards** loads the models and adds tap-driven information cards. Choose **Get started** to begin with Project Setup.
+        여덟 개의 행성이 각자의 궤도를 돌고, 행성을 손가락으로 집으면 그 행성이 시선 정면으로
+        다가와 설명과 함께 나타납니다.
+
+        visionOS 개발이 처음이어도 괜찮습니다. SwiftUI 기본 문법만 알고 있다면 따라올 수 있도록
+        RealityKit, 엔티티, 공간 제스처 같은 개념을 하나씩 설명하면서 진행합니다.
+
+        @Image(source: "app-solarsystem.png", alt: "우주 공간에 태양과 여덟 개의 행성이 궤도를 따라 늘어서 있는 화면")
     }
 
-    @Chapter(name: "Project Setup") {
-        @TutorialReference(tutorial: "doc:01-ProjectSetup")
+    @Chapter(name: "프로젝트와 에셋 준비하기") {
+        빈 visionOS 앱을 만들고, 별 배경과 태양, 지구를 포함한 여덟 행성의 모델을 준비합니다.
+        이후 챕터의 코드를 작성하기 전에 반드시 완료하세요.
+
+        @Image(source: "diagram-assets-folder.svg", alt: "여러 개의 행성 모델 파일이 폴더에 담겨 있는 모습")
+        @TutorialReference(tutorial: "doc:01-ProjectAndAssets")
     }
 
-    @Chapter(name: "Placing the Planets") {
-        @TutorialReference(tutorial: "doc:02-PlacingPlanets")
+    @Chapter(name: "창과 몰입 공간 만들기") {
+        창에서 몰입 공간을 여닫고, 별이 가득한 우주 배경을 띄웁니다.
+
+        @Image(source: "app-starfield.png", alt: "별이 가득한 검은 우주 배경")
+        @TutorialReference(tutorial: "doc:02-WindowAndSpace")
     }
 
-    @Chapter(name: "Planet Info Cards") {
-        @TutorialReference(tutorial: "doc:03-PlanetInfoCards")
+    @Chapter(name: "태양과 조명") {
+        태양 모델을 불러와 배치하고, 장면 전체를 비추는 빛을 직접 만듭니다.
+
+        @Image(source: "app-sun.png", alt: "우주 공간에 떠 있는 태양")
+        @TutorialReference(tutorial: "doc:03-SunAndLighting")
+    }
+
+    @Chapter(name: "행성과 궤도") {
+        여덟 개의 행성이 각자의 궤도를 돌고 제자리에서 자전하도록 만듭니다.
+
+        @Image(source: "app-solarsystem.png", alt: "궤도선을 따라 늘어선 여덟 개의 행성")
+        @TutorialReference(tutorial: "doc:04-PlanetsInOrbit")
+    }
+
+    @Chapter(name: "핀치해서 행성 선택하기") {
+        행성을 바라보고 손가락을 맞대면 그 행성이 앞으로 다가오도록 만듭니다.
+
+        @Image(source: "app-focus-mars.png", alt: "한 행성이 크게 확대되어 있는 화면")
+        @TutorialReference(tutorial: "doc:05-TapToFocus")
+    }
+
+    @Chapter(name: "설명 패널과 시선 앞 배치") {
+        행성 옆에 설명 패널을 띄우고, 지금 바라보는 방향 정면에 나타나게 만듭니다.
+
+        @Image(source: "app-focus-mars.png", alt: "확대된 행성 옆에 설명 패널이 떠 있는 화면")
+        @TutorialReference(tutorial: "doc:06-InfoPanelAndHeadPlacement")
+    }
+
+    @Resources(title: "자료 내려받기") {
+        튜토리얼을 따라 하는 데 필요한 파일과, 더 깊이 알아볼 때 도움이 되는 자료입니다.
+        <doc:01-ProjectAndAssets> 페이지 상단의 **Project files** 다운로드 버튼에서 `SolarSystem-Assets.zip`을 내려받으세요.
+        별 배경 이미지와 태양·여덟 행성 모델이 모두 들어 있는 `SolarSystemAssets` 패키지, 연결 방법을 안내하는 `README.txt`가 들어 있습니다.
+
+        @Documentation(destination: "https://developer.apple.com/documentation/realitykit") {
+            공식 문서에서 더 자세한 내용을 볼 수 있습니다.
+
+            - [RealityKit](https://developer.apple.com/documentation/realitykit) — 엔티티, 컴포넌트, 시스템
+            - [visionOS](https://developer.apple.com/documentation/visionos) — 창, 볼륨, 몰입 공간
+            - [ARKit in visionOS](https://developer.apple.com/documentation/arkit/arkit_in_visionos) — 머리 위치와 손 추적
+        }
+
+        @SampleCode(destination: "https://developer.apple.com/documentation/visionos/world") {
+            이 앱의 바탕이 된 Apple의 샘플입니다.
+
+            - [Hello World](https://developer.apple.com/documentation/visionos/world) — 지구, 달, 인공위성 구현
+        }
     }
 }

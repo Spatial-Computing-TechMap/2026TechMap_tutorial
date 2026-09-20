@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="650" viewBox="0 0 1080 650" font-family="-apple-system, BlinkMacSystemFont, Apple SD Gothic Neo, sans-serif">
+<rect width="1080" height="650" rx="24" fill="#121824"/>
+<text x="40" y="57" font-size="29" fill="#e8edf5" font-weight="600">패키지 폴더 전체를 프로젝트 안에 보관합니다</text>
+<text x="40" y="95" font-size="20" fill="#aebed2" font-weight="400">SolarSystem.xcodeproj가 있는 폴더를 기준으로 확인하세요.</text>
+<rect x="36" y="125" width="600" height="445" rx="16" fill="#1c2432" stroke="#354154"/>
+<text x="60" y="167" font-size="23" fill="#7dcfff" font-weight="600">SolarSystem/</text>
+<text x="60" y="216" font-size="20" fill="#e8edf5" font-weight="400">SolarSystem.xcodeproj</text>
+<text x="60" y="257" font-size="20" fill="#e8edf5" font-weight="400">SolarSystem/</text>
+<text x="60" y="298" font-size="20" fill="#e8edf5" font-weight="400">    Assets.xcassets/</text>
+<text x="60" y="339" font-size="20" fill="#e8edf5" font-weight="400">Packages/</text>
+<text x="60" y="380" font-size="20" fill="#e8edf5" font-weight="400">    RealityKitContent/  (앱 템플릿)</text>
+<text x="60" y="421" font-size="20" fill="#e8edf5" font-weight="400">    SolarSystemAssets/  (제공 패키지)</text>
+<text x="60" y="462" font-size="20" fill="#e8edf5" font-weight="400">        Package.swift</text>
+<rect x="660" y="125" width="384" height="445" rx="16" fill="#1c2432" stroke="#354154"/>
+<text x="684" y="167" font-size="23" fill="#7dcfff" font-weight="600">Add Local에서 선택할 폴더</text>
+<text x="684" y="216" font-size="20" fill="#e8edf5" font-weight="400">Packages/</text>
+<text x="684" y="257" font-size="20" fill="#e8edf5" font-weight="400">    SolarSystemAssets/</text>
+<text x="684" y="298" font-size="20" fill="#e8edf5" font-weight="400"></text>
+<text x="684" y="339" font-size="20" fill="#e8edf5" font-weight="400">Package.swift가 있는</text>
+<text x="684" y="380" font-size="20" fill="#e8edf5" font-weight="400">폴더를 선택합니다.</text>
+<text x="40" y="620" font-size="19" fill="#aebed2" font-weight="400">다운로드 폴더 대신 프로젝트 안에 보관하면 파일을 함께 관리할 수 있습니다.</text>
+</svg>

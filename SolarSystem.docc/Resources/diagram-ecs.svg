@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 430" width="800" height="430" font-family="-apple-system, 'SF Pro Text', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+  <rect width="800" height="430" rx="20" fill="#14161c"/>
+  <text x="40" y="56" fill="#f5f5f7" font-size="24" font-weight="600">ECS: 엔티티 · 컴포넌트 · 시스템</text>
+  <text x="40" y="86" fill="#9aa0aa" font-size="15">값은 컴포넌트가 들고, 실제로 움직이는 일은 시스템이 합니다.</text>
+
+  <g>
+    <rect x="40" y="120" width="210" height="130" rx="14" fill="#1f2430" stroke="#3a4152"/>
+    <text x="60" y="152" fill="#7fd1ff" font-size="13" font-weight="600">ENTITY</text>
+    <text x="60" y="182" fill="#f5f5f7" font-size="18" font-weight="600">rotator</text>
+    <text x="60" y="212" fill="#9aa0aa" font-size="14">공간에 놓인 물체 하나</text>
+    <circle cx="205" cy="196" r="22" fill="#c8612f"/>
+  </g>
+
+  <path d="M250 185 H300" stroke="#5a6478" stroke-width="2"/>
+  <path d="M292 179 l10 6 -10 6 z" fill="#5a6478"/>
+
+  <g>
+    <rect x="300" y="120" width="210" height="130" rx="14" fill="#1f2430" stroke="#3a4152"/>
+    <text x="320" y="152" fill="#ffd479" font-size="13" font-weight="600">COMPONENT</text>
+    <text x="320" y="182" fill="#f5f5f7" font-size="18" font-weight="600">RotationComponent</text>
+    <text x="320" y="210" fill="#9aa0aa" font-size="14">speed: 0.045</text>
+    <text x="320" y="232" fill="#9aa0aa" font-size="14">axis: [0, 1, 0]</text>
+  </g>
+
+  <path d="M510 185 H560" stroke="#5a6478" stroke-width="2"/>
+  <path d="M552 179 l10 6 -10 6 z" fill="#5a6478"/>
+
+  <g>
+    <rect x="560" y="120" width="200" height="130" rx="14" fill="#1f2430" stroke="#3a4152"/>
+    <text x="580" y="152" fill="#8ce99a" font-size="13" font-weight="600">SYSTEM</text>
+    <text x="580" y="182" fill="#f5f5f7" font-size="18" font-weight="600">RotationSystem</text>
+    <text x="580" y="212" fill="#9aa0aa" font-size="14">매 프레임 실행</text>
+  </g>
+
+  <g>
+    <rect x="40" y="290" width="720" height="104" rx="14" fill="#191d26" stroke="#2c3240"/>
+    <text x="64" y="324" fill="#f5f5f7" font-size="15" font-weight="600">매 프레임 시스템이 하는 일</text>
+    <text x="64" y="352" fill="#9aa0aa" font-size="14">1. RotationComponent를 가진 엔티티를 모두 찾는다</text>
+    <text x="64" y="376" fill="#9aa0aa" font-size="14">2. speed × deltaTime 만큼 돌린다 — deltaTime을 곱해야 주사율과 상관없이 속도가 같다</text>
+  </g>
+
+  <text x="40" y="418" fill="#6b7280" font-size="13">시스템 등록을 빠뜨리면 컴포넌트는 값만 들고 있을 뿐 아무 일도 하지 않습니다.</text>
+</svg>

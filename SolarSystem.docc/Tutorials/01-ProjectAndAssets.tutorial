@@ -1,0 +1,125 @@
+@Tutorial(time: 15, projectFiles: "SolarSystem-Assets.zip") {
+    @Intro(title: "프로젝트와 에셋 준비하기") {
+        새 visionOS 앱에 별 배경 이미지와 태양계 에셋 패키지를 연결합니다.
+        아래 **Project files**에서 `SolarSystem-Assets.zip`을 내려받으세요.
+        별 배경 `Starfield.jpg`와 태양·여덟 행성 모델이 모두 들어 있는 로컬 Swift 패키지
+        `SolarSystemAssets`를 제공합니다.
+    }
+
+    @Section(title: "visionOS 앱과 제공 파일 준비하기") {
+        @ContentAndMedia {
+            Xcode 26 이상에서 새 visionOS 앱으로 시작합니다.
+            제공 패키지의 최소 배포 대상은 **visionOS 26.0**입니다.
+            이 챕터에서는 에셋을 프로젝트에 연결하고, 다음 챕터부터 화면에 띄우는 코드를 작성합니다.
+        }
+
+        @Steps {
+            @Step {
+                Xcode에서 **File ▸ New ▸ Project**를 엽니다.
+                **visionOS** 탭의 **App**을 선택하고 **Next**를 누릅니다.
+
+                @Image(source: "xcode-new-project-template.png", alt: "Xcode에서 visionOS App 템플릿을 선택한 화면")
+            }
+
+            @Step {
+                **Product Name**을 `SolarSystem`으로 지정합니다.
+                **Initial Scene**은 `Window`, **Immersive Space Renderer**는 `RealityKit`,
+                **Immersive Space**는 `Full`로 선택한 뒤 프로젝트를 저장합니다.
+
+                프로젝트 설정의 **TARGETS ▸ SolarSystem ▸ General ▸ Minimum Deployments**에서
+                **visionOS 26.0 이상**인지 확인합니다.
+
+                @Image(source: "xcode-new-project-options.png", alt: "SolarSystem 앱의 창과 전체 몰입 공간을 설정한 화면")
+            }
+
+            @Step {
+                이 페이지 상단의 **Project files**를 눌러 `SolarSystem-Assets.zip`을 내려받고 압축을 풉니다.
+                `SolarSystem-Assets` 폴더 안에 `Starfield.jpg`, `SolarSystemAssets` 폴더,
+                `README.txt`가 있는지 확인합니다. 다운로드 크기는 약 249MB입니다.
+
+                > Note: `SolarSystemAssets`는 `Package.swift`, Reality Composer Pro 프로젝트,
+                > `.rkassets`를 갖춘 패키지입니다. 태양과 여덟 행성의 모델, 연결 데이터와 텍스처가
+                > 모두 준비되어 있으므로 폴더 이름과 내부 구조를 그대로 유지하세요.
+
+                @Image(source: "diagram-asset-bundle.svg", alt: "제공 파일의 Starfield.jpg와 완성된 SolarSystemAssets 패키지 구성")
+            }
+        }
+    }
+
+    @Section(title: "별 배경과 태양계 패키지를 Xcode에 연결하기") {
+        @ContentAndMedia {
+            별 배경은 **앱의 에셋 카탈로그**에 추가하고, 모델은 **SolarSystemAssets 패키지**에서 읽습니다.
+            앱 템플릿이 만든 `RealityKitContent`와 별도로 제공 패키지를 연결합니다.
+
+            모델은 이미 패키지 안에 배치되어 있습니다. 제공받은 `SolarSystemAssets` 폴더 전체를
+            프로젝트에 연결하면 태양과 여덟 행성을 함께 사용할 수 있습니다.
+
+            @Image(source: "diagram-assets-ready.svg", alt: "Starfield 이미지 세트는 앱의 Assets에, SolarSystemAssets는 로컬 패키지 의존성으로 연결한 구조")
+        }
+
+        @Steps {
+            @Step {
+                Xcode에서 앱의 **Assets** 에셋 카탈로그를 열고, Finder의 `Starfield.jpg`를
+                에셋 카탈로그의 항목 목록으로 드래그합니다.
+
+                생성된 이미지 세트 이름을 **Starfield**로 맞추고 별 이미지가 보이는지 확인합니다.
+                다음 챕터의 `TextureResource(named: "Starfield")`가 이 이름을 사용합니다.
+
+                @Image(source: "xcode-assets-starfield.png", alt: "앱의 에셋 카탈로그에 Starfield 이미지 세트를 추가한 화면")
+            }
+
+            @Step {
+                Finder에서 `SolarSystem.xcodeproj`가 있는 프로젝트 폴더를 엽니다.
+                그 안의 `Packages` 폴더에 제공받은 **SolarSystemAssets 폴더 전체**를 복사합니다.
+                `Packages` 폴더가 없다면 새로 만듭니다.
+
+                최종 위치는 `프로젝트 폴더/Packages/SolarSystemAssets/Package.swift`입니다.
+                이 위치에 패키지를 두면 다운로드 폴더를 정리한 뒤에도 프로젝트에서 계속 사용할 수 있습니다.
+
+                @Image(source: "diagram-package-location.svg", alt: "SolarSystem.xcodeproj와 나란한 Packages 폴더에 SolarSystemAssets 패키지 전체를 복사한 구조")
+            }
+
+            @Step {
+                Xcode의 **File ▸ Add Package Dependencies**를 엽니다.
+                **Add Local** 버튼을 누르고, 방금 복사한 `Packages/SolarSystemAssets` 폴더를 선택합니다.
+
+                > Important: `Package.swift`가 있는 **SolarSystemAssets 폴더**를 선택합니다.
+                > 그 안의 `Sources`나 `.rkassets` 폴더를 선택하는 단계가 아닙니다.
+
+                @Image(source: "xcode-select-package-folder.png", alt: "Xcode의 Add Local에서 Package.swift가 들어 있는 SolarSystemAssets 폴더를 선택한 화면")
+            }
+
+            @Step {
+                추가할 패키지 제품으로 **SolarSystemAssets**를 선택하고,
+                **Add to Target**을 **SolarSystem** 앱 타깃으로 지정해 추가합니다.
+
+                > Note: 이 패키지에는 태양 `Sun`, 지구 `Earth`와 `Planets` 안의 나머지 일곱 행성이
+                > 들어 있습니다. 이후 예제에서는 `import SolarSystemAssets`와
+                > `solarSystemAssetsBundle`을 사용합니다.
+
+                @Image(source: "xcode-package-target.png", alt: "SolarSystemAssets 제품의 Add to Target을 SolarSystem 앱으로 지정한 실제 Xcode 화면")
+            }
+
+            @Step {
+                앱의 **Assets**에 `Starfield`가 있고, 프로젝트의 패키지 의존성 목록에
+                `SolarSystemAssets`가 표시되는지 확인합니다. 이어서 앱 타깃의
+                **General ▸ Frameworks, Libraries, and Embedded Content**에
+                **SolarSystemAssets**가 있는지 확인합니다.
+
+                패키지를 펼치면 `Sources/SolarSystemAssets/SolarSystemAssets.rkassets`에서
+                `Sun.usda`, `Earth.usda`, `Planets`와 연결 파일을 볼 수 있습니다.
+
+                @Image(source: "xcode-package-linked.png", alt: "SolarSystem 앱 타깃의 General 설정에 SolarSystemAssets 라이브러리가 연결된 화면")
+            }
+
+            @Step {
+                실행 대상을 **Apple Vision Pro 시뮬레이터**로 선택하고 **Command + B**로 빌드합니다.
+                오류 없이 완료되면 프로젝트와 에셋 준비가 끝났습니다.
+
+                > Note: 이후 코드에서 `No such module 'SolarSystemAssets'`가 나오면 패키지 제품이
+                > 앱 타깃에 연결되어 있는지 확인하세요. 별 배경 로딩에 실패하면 앱 에셋 카탈로그의
+                > 이미지 세트 이름이 `Starfield`인지 확인합니다.
+            }
+        }
+    }
+}

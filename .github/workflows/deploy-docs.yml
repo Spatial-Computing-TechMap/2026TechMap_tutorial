@@ -1,4 +1,4 @@
-name: Deploy DocC tutorial to GitHub Pages
+name: Deploy DocC to GitHub Pages
 
 on:
   push:
@@ -7,40 +7,35 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: github-pages
   cancel-in-progress: false
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Build DocC tutorial
-        run: |
-          xcrun docc convert SolarSystem.docc \
-            --output-path _site \
-            --hosting-base-path 2026TechMap_tutorial
-
+      - uses: actions/checkout@v6
       - name: Configure Pages
         uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Build DocC
+        run: ./scripts/build-docs.sh
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v4
         with:
-          path: _site
+          path: .build/SolarSystem.doccarchive
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy Pages
         id: deployment
         uses: actions/deploy-pages@v4

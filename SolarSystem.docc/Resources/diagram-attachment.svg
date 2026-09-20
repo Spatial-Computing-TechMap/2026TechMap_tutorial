@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400" font-family="-apple-system, 'SF Pro Text', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+  <rect width="800" height="400" rx="20" fill="#14161c"/>
+  <text x="40" y="56" fill="#f5f5f7" font-size="24" font-weight="600">attachment: SwiftUI 뷰를 공간에 붙이기</text>
+  <text x="40" y="86" fill="#9aa0aa" font-size="15">평범한 SwiftUI 뷰가 엔티티로 바뀌어, 원하는 자리에 놓입니다.</text>
+
+  <g>
+    <rect x="50" y="140" width="230" height="150" rx="14" fill="#1f2430" stroke="#3a4152"/>
+    <text x="72" y="172" fill="#7fd1ff" font-size="13" font-weight="600">SwiftUI</text>
+    <text x="72" y="204" fill="#f5f5f7" font-size="16">PlanetInfoPanel</text>
+    <text x="72" y="232" fill="#9aa0aa" font-size="14">Text · Button · VStack</text>
+    <text x="72" y="262" fill="#6b7280" font-size="13">frame(width: 760)</text>
+  </g>
+
+  <g>
+    <path d="M290 215 H370" stroke="#5a6478" stroke-width="2"/>
+    <path d="M362 209 l10 6 -10 6 z" fill="#5a6478"/>
+    <text x="330" y="200" fill="#6b7280" font-size="13" text-anchor="middle">Attachment(id:)</text>
+  </g>
+
+  <g>
+    <rect x="380" y="140" width="230" height="150" rx="14" fill="#1f2430" stroke="#3a4152"/>
+    <text x="402" y="172" fill="#ffd479" font-size="13" font-weight="600">RealityKit</text>
+    <text x="402" y="204" fill="#f5f5f7" font-size="16">Entity</text>
+    <text x="402" y="232" fill="#9aa0aa" font-size="14">position · scale · parent</text>
+    <text x="402" y="262" fill="#6b7280" font-size="13">760pt ≈ 0.56m</text>
+  </g>
+
+  <g>
+    <circle cx="700" cy="196" r="34" fill="#c8612f"/>
+    <rect x="662" y="240" width="76" height="50" rx="8" fill="#242a36" stroke="#4d7fb3"/>
+    <text x="700" y="270" fill="#9aa0aa" font-size="12" text-anchor="middle">패널</text>
+    <text x="700" y="152" fill="#6b7280" font-size="12" text-anchor="middle">행성</text>
+  </g>
+
+  <g>
+    <rect x="50" y="316" width="710" height="56" rx="14" fill="#191d26" stroke="#2c3240"/>
+    <text x="74" y="350" fill="#9aa0aa" font-size="14">확대하지 않은 동안에는 opacity(0) 과 allowsHitTesting(false) 를 함께 써야 합니다. 투명해도 입력은 가로채기 때문입니다.</text>
+  </g>
+</svg>

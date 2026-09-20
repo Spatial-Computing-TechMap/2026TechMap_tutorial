@@ -1,3 +1,6 @@
 .DS_Store
 _site/
 .docc-build/
+.build/
+SolarSystem.docc/Resources/SolarSystem-Assets.zip
+SolarSystem.docc/Resources/.SolarSystem-Assets.*

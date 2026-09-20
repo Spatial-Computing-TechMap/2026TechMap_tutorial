@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 470" width="800" height="470" font-family="-apple-system, 'SF Pro Text', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+  <rect width="800" height="470" rx="20" fill="#14161c"/>
+  <text x="40" y="56" fill="#f5f5f7" font-size="24" font-weight="600">엔티티 계층으로 공전과 자전 나누기</text>
+  <text x="40" y="86" fill="#9aa0aa" font-size="15">한 엔티티는 한 가지 회전만 가질 수 있어, 층을 나눠 역할을 맡깁니다.</text>
+
+  <g>
+    <rect x="40" y="116" width="400" height="46" rx="10" fill="#1f2430" stroke="#3a4152"/>
+    <text x="58" y="145" fill="#f5f5f7" font-size="16" font-weight="600">PlanetEntity</text>
+    <text x="250" y="145" fill="#9aa0aa" font-size="14">태양계 중심에 놓임</text>
+
+    <rect x="72" y="176" width="400" height="46" rx="10" fill="#1f2430" stroke="#4d7fb3"/>
+    <text x="90" y="205" fill="#7fd1ff" font-size="16" font-weight="600">orbitPivot</text>
+    <text x="250" y="205" fill="#9aa0aa" font-size="14">공전 — 여기가 돌면 태양을 돈다</text>
+
+    <rect x="104" y="236" width="400" height="46" rx="10" fill="#1f2430" stroke="#3a4152"/>
+    <text x="122" y="265" fill="#f5f5f7" font-size="16" font-weight="600">radiusOffset</text>
+    <text x="282" y="265" fill="#9aa0aa" font-size="14">궤도 반지름만큼 밀어냄</text>
+
+    <rect x="136" y="296" width="400" height="46" rx="10" fill="#1f2430" stroke="#3a4152"/>
+    <text x="154" y="325" fill="#f5f5f7" font-size="16" font-weight="600">equatorialPlane</text>
+    <text x="314" y="325" fill="#9aa0aa" font-size="14">자전축 기울기</text>
+
+    <rect x="168" y="356" width="400" height="46" rx="10" fill="#1f2430" stroke="#4d7fb3"/>
+    <text x="186" y="385" fill="#7fd1ff" font-size="16" font-weight="600">rotator</text>
+    <text x="346" y="385" fill="#9aa0aa" font-size="14">자전 — 여기가 돌면 제자리에서 돈다</text>
+
+    <rect x="200" y="416" width="400" height="40" rx="10" fill="#191d26" stroke="#2c3240"/>
+    <text x="218" y="442" fill="#f5f5f7" font-size="15">model — 눈에 보이는 행성</text>
+  </g>
+
+  <g stroke="#3a4152" stroke-width="2" fill="none">
+    <path d="M56 162 V196 H72"/>
+    <path d="M88 222 V256 H104"/>
+    <path d="M120 282 V316 H136"/>
+    <path d="M152 342 V376 H168"/>
+    <path d="M184 402 V436 H200"/>
+  </g>
+
+  <g>
+    <circle cx="680" cy="230" r="14" fill="#ffd479"/>
+    <circle cx="680" cy="230" r="86" fill="none" stroke="#3a4152" stroke-dasharray="4 6"/>
+    <circle cx="680" cy="144" r="18" fill="#c8612f"/>
+    <path d="M680 126 v-16" stroke="#7fd1ff" stroke-width="2"/>
+    <text x="640" y="342" fill="#6b7280" font-size="13">부모가 돌면</text>
+    <text x="640" y="362" fill="#6b7280" font-size="13">자식도 함께 움직입니다</text>
+  </g>
+</svg>

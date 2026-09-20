@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="620" viewBox="0 0 1080 620" font-family="-apple-system, BlinkMacSystemFont, Apple SD Gothic Neo, sans-serif">
+<rect width="1080" height="620" rx="24" fill="#121824"/>
+<text x="40" y="57" font-size="29" fill="#e8edf5" font-weight="600">제공 파일 하나로 에셋 준비를 시작합니다</text>
+<text x="40" y="95" font-size="20" fill="#aebed2" font-weight="400">별 배경 1장 + 태양과 여덟 행성이 들어 있는 완성된 패키지</text>
+<rect x="36" y="125" width="485" height="415" rx="16" fill="#1c2432" stroke="#354154"/>
+<text x="60" y="167" font-size="23" fill="#7dcfff" font-weight="600">SolarSystem-Assets/</text>
+<text x="60" y="216" font-size="20" fill="#e8edf5" font-weight="400">Starfield.jpg</text>
+<text x="60" y="257" font-size="20" fill="#e8edf5" font-weight="400">SolarSystemAssets/</text>
+<text x="60" y="298" font-size="20" fill="#e8edf5" font-weight="400">    Package.swift</text>
+<text x="60" y="339" font-size="20" fill="#e8edf5" font-weight="400">    Package.realitycomposerpro</text>
+<text x="60" y="380" font-size="20" fill="#e8edf5" font-weight="400">    Sources/</text>
+<text x="60" y="421" font-size="20" fill="#e8edf5" font-weight="400">README.txt</text>
+<rect x="545" y="125" width="499" height="415" rx="16" fill="#1c2432" stroke="#354154"/>
+<text x="569" y="167" font-size="23" fill="#7dcfff" font-weight="600">모델은 패키지 안에 준비되어 있습니다</text>
+<text x="569" y="216" font-size="20" fill="#e8edf5" font-weight="400">태양 · 수성 · 금성 · 지구 · 화성</text>
+<text x="569" y="257" font-size="20" fill="#e8edf5" font-weight="400">목성 · 토성 · 천왕성 · 해왕성</text>
+<text x="569" y="298" font-size="20" fill="#e8edf5" font-weight="400">태양과 지구의 연결 데이터·텍스처</text>
+<text x="569" y="339" font-size="20" fill="#e8edf5" font-weight="400">폴더 전체를 복사한 뒤</text>
+<text x="569" y="380" font-size="20" fill="#e8edf5" font-weight="400">Xcode에서 Add Local로 연결합니다.</text>
+<text x="40" y="590" font-size="19" fill="#aebed2" font-weight="400">패키지 내부의 파일 이름과 하위 폴더 구조를 그대로 유지하세요.</text>
+</svg>

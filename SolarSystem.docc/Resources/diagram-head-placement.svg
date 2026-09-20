@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 430" width="800" height="430" font-family="-apple-system, 'SF Pro Text', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif">
+  <rect width="800" height="430" rx="20" fill="#14161c"/>
+  <text x="40" y="56" fill="#f5f5f7" font-size="24" font-weight="600">시선 정면에 배치하기 (위에서 내려다본 그림)</text>
+  <text x="40" y="86" fill="#9aa0aa" font-size="15">머리 위치에서 앞쪽으로 1.3m, 그리고 묶음이 가운데 오도록 왼쪽으로 밀어 줍니다.</text>
+
+  <g>
+    <circle cx="130" cy="260" r="20" fill="#3a4152" stroke="#7fd1ff" stroke-width="2"/>
+    <text x="130" y="316" fill="#f5f5f7" font-size="14" text-anchor="middle">머리 위치</text>
+    <text x="130" y="336" fill="#6b7280" font-size="12" text-anchor="middle">head.columns.3</text>
+  </g>
+
+  <g>
+    <line x1="152" y1="260" x2="400" y2="260" stroke="#7fd1ff" stroke-width="2" stroke-dasharray="6 5"/>
+    <path d="M392 254 l10 6 -10 6 z" fill="#7fd1ff"/>
+    <text x="276" y="248" fill="#7fd1ff" font-size="14" text-anchor="middle">forward × 1.3m</text>
+  </g>
+
+  <g>
+    <circle cx="470" cy="208" r="40" fill="#c8612f"/>
+    <text x="470" y="170" fill="#f5f5f7" font-size="13" text-anchor="middle">행성 (자리의 원점)</text>
+    <rect x="540" y="168" width="180" height="120" rx="12" fill="#1f2430" stroke="#4d7fb3"/>
+    <text x="630" y="234" fill="#f5f5f7" font-size="15" text-anchor="middle">설명 패널</text>
+    <text x="630" y="258" fill="#6b7280" font-size="12" text-anchor="middle">offset 만큼 오른쪽</text>
+  </g>
+
+  <g>
+    <line x1="430" y1="330" x2="720" y2="330" stroke="#8ce99a" stroke-width="2"/>
+    <line x1="430" y1="322" x2="430" y2="338" stroke="#8ce99a" stroke-width="2"/>
+    <line x1="720" y1="322" x2="720" y2="338" stroke="#8ce99a" stroke-width="2"/>
+    <text x="575" y="356" fill="#8ce99a" font-size="14" text-anchor="middle">행성 + 패널을 합친 폭</text>
+    <line x1="575" y1="300" x2="575" y2="340" stroke="#8ce99a" stroke-width="1" stroke-dasharray="3 4"/>
+    <text x="575" y="382" fill="#6b7280" font-size="13" text-anchor="middle">이 가운데가 시선과 만나도록 자리를 왼쪽으로 민다</text>
+  </g>
+
+  <text x="40" y="414" fill="#6b7280" font-size="13">앞쪽 방향의 y를 0으로 만들어 수평 성분만 쓰면, 올려다보며 핀치해도 기울지 않습니다.</text>
+</svg>
