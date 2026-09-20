@@ -1,38 +1,78 @@
+/*
+See the LICENSE.txt file for this sample’s licensing information.
+
+Abstract:
+A detail view that presents information about different module types.
+*/
+
+// Mixed Immersive에서 보이는 카드
 import SwiftUI
 
-/// 모듈 하나를 소개하는 카드입니다. 왼쪽에 글, 오른쪽에 미리보기가 옵니다.
+/// A detail view that presents information about different module types.
 struct SolarCard: View {
+    @Environment(AppModel.self) private var model
+    @Environment(\.openWindow) private var openWindow
     var module: Module
 
     var body: some View {
-        // `depthAlignment`는 뷰가 아니라 `Layout` 프로토콜을 따르는 값에만
-        // 걸 수 있어서 `HStackLayout`을 씁니다. 가로로 늘어놓되 앞뒤(깊이)
-        // 기준은 가운데로 맞춥니다.
-        HStackLayout(spacing: 60).depthAlignment(.center) {
-            VStack(alignment: .leading, spacing: 20) {
-                Text(module.heading)
-                    .font(.system(size: 50, weight: .bold))
+        @Bindable var model = model
 
-                Text(module.overview)
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
+        GeometryReader { proxy in
+            let textWidth = min(max(proxy.size.width * 0.4, 300), 500)
+            let imageWidth = min(max(proxy.size.width - textWidth, 300), 700)
+            ZStack {
+                // 텍스트와 module.detailView 둘 다 깊이(depth)가 없는 평면
+                // 콘텐츠라, depthAlignment(.center)를 줘도 정렬할 깊이 차이 자체가
+                // 없어서 겉모습/동작은 그대로다. HStack 대신 HStackLayout을 써야
+                // depthAlignment를 걸 수 있다.
+                HStackLayout(spacing: 60).depthAlignment(.center) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(module.heading)
+                            .font(.system(size: 50, weight: .bold))
+                            .padding(.bottom, 15)
+                            .accessibilitySortPriority(4)
+
+                        Text(module.overview)
+                            .padding(.bottom, 24)
+                            .accessibilitySortPriority(3)
+                        
+                        ToggleImmersiveSpaceButton()
+                    }
+                    .frame(width: textWidth, alignment: .leading)
+
+                    module.detailView
+                        .frame(width: imageWidth, alignment: .center)
+                }
             }
-            .frame(width: 400, alignment: .leading)
-
-            // 두께가 있는 3D 미리보기입니다. 위의 `depthAlignment`가
-            // 이 콘텐츠와 왼쪽 글의 앞뒤 기준을 맞춰 줍니다.
-            module.detailView
-                .frame(width: 400, height: 400)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(60)
-    }
+        .padding([.leading, .trailing], 70)
+        .padding(.bottom, 24)
+        .background {
+            if module == .solar {
+                Image("SolarBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .accessibility(hidden: true)
+            }
+        }
+
+        // A settings button in an ornament,
+        // visible only when `showDebugSettings` is true.
+//        .settingsButton(module: module)
+   }
 }
 
 extension Module {
-    /// 모듈마다 오른쪽에 보여줄 미리보기입니다. 이 파일 안에서만 쓰므로
-    /// `fileprivate`로 둡니다.
     @ViewBuilder
     fileprivate var detailView: some View {
         SolarSystemModule()
+    }
+}
+
+#Preview("Solar System") {
+    NavigationStack {
+        SolarCard(module: .solar)
+            .environment(AppModel())
     }
 }

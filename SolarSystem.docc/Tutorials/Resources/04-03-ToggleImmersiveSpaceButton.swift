@@ -1,7 +1,14 @@
+//
+//  ToggleImmersiveSpaceButton.swift
+//  SolarSystem
+//
+//  Created by Saerom on 8/12/26.
+//
+
 import SwiftUI
 
-/// 몰입 공간을 여닫는 버튼입니다.
 struct ToggleImmersiveSpaceButton: View {
+
     @Environment(AppModel.self) private var model
 
     @Environment(\.dismissImmersiveSpace) private var dismissImmersiveSpace
@@ -11,34 +18,39 @@ struct ToggleImmersiveSpaceButton: View {
         Button {
             Task { @MainActor in
                 switch model.immersiveSpaceState {
-                case .open:
-                    model.immersiveSpaceState = .inTransition
-                    await dismissImmersiveSpace()
-                    // 닫힌 뒤의 상태는 `SolarSystem`의 `onDisappear`가
-                    // 설정하므로 여기서 다시 쓰지 않습니다.
+                    case .open:
+                        model.immersiveSpaceState = .inTransition
+                        await dismissImmersiveSpace()
+                        // Don't set immersiveSpaceState to .closed because there
+                        // are multiple paths to ImmersiveView.onDisappear().
+                        // Only set .closed in ImmersiveView.onDisappear().
 
-                case .closed:
-                    model.immersiveSpaceState = .inTransition
-                    // 여기 쓰는 id가 `@main`의 `ImmersiveSpace(id:)`와
-                    // 같아야 합니다. 다르면 조용히 열리지 않습니다.
-                    switch await openImmersiveSpace(id: model.immersiveSpaceID) {
-                    case .opened:
+                    case .closed:
+                        model.immersiveSpaceState = .inTransition
+                        switch await openImmersiveSpace(id: model.immersiveSpaceID) {
+                            case .opened:
+                                // Don't set immersiveSpaceState to .open because there
+                                // may be multiple paths to ImmersiveView.onAppear().
+                                // Only set .open in ImmersiveView.onAppear().
+                                break
+
+                            case .userCancelled, .error:
+                                // On error, we need to mark the immersive space
+                                // as closed because it failed to open.
+                                fallthrough
+                            @unknown default:
+                                // On unknown response, assume space did not open.
+                                model.immersiveSpaceState = .closed
+                        }
+
+                    case .inTransition:
+                        // This case should not ever happen because button is disabled for this case.
                         break
-                    case .userCancelled, .error:
-                        fallthrough
-                    @unknown default:
-                        model.immersiveSpaceState = .closed
-                    }
-
-                case .inTransition:
-                    // 전환 중에는 아무것도 하지 않습니다.
-                    break
                 }
             }
         } label: {
-            Text(model.immersiveSpaceState == .open ? "태양계 닫기" : "태양계 열기")
+            Text(model.immersiveSpaceState == .open ? "Exit the Solar System" : "Going to the Solar System")
         }
-        // 전환이 끝날 때까지 버튼을 잠급니다.
         .disabled(model.immersiveSpaceState == .inTransition)
         .animation(.none, value: 0)
         .fontWeight(.semibold)

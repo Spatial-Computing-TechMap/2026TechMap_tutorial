@@ -1,17 +1,27 @@
+//
+//  FocusStage.swift
+//  SolarSystem
+//
+//  Created by Saerom on 8/13/26.
+//
+
 import SwiftUI
 import RealityKit
 
-/// 선택된 행성과 설명 패널이 모여드는, 단 하나뿐인 무대입니다.
+/// A single, shared anchor entity positioned in front of the viewer.
 ///
-/// 모든 `Planet` 뷰가 자기 행성을 여기로 옮겨 붙이기 때문에, 그 행성이
-/// 궤도 어디에 있었든 늘 같은 자리에 같은 크기로 나타납니다.
+/// Every `Planet` view reparents its planet into this entity while that
+/// planet is focused, so a zoomed-in planet and its info panel always
+/// appear in the same comfortable spot, regardless of where the planet's
+/// orbit happened to put it.
 struct FocusStage: View {
     @Binding var stageEntity: Entity?
-    /// 행성이 선택되어 있는 동안에만 키 라이트를 켭니다.
+    /// Whether a planet is currently focused, which turns the key light on.
     var isActive: Bool
 
-    /// 보는 사람 쪽에서 행성을 비추는 빛입니다. 이게 없으면 유일한 광원인
-    /// 태양이 무대 훨씬 뒤에 있어서, 정면이 어둡고 탁하게 보입니다.
+    /// Lights the focused planet from the viewer's side. Without it, the
+    /// only light is the Sun's, far behind the stage, so the side of the
+    /// planet facing the viewer looks dim and muddy.
     @State private var keyLight: Entity?
 
     var body: some View {
@@ -22,6 +32,9 @@ struct FocusStage: View {
             content.add(stage)
             stageEntity = stage
 
+            // A child of the stage, so it follows the stage wherever it's
+            // placed in front of the viewer. The stage's +Z faces the
+            // viewer, so this shines from their upper left onto the planet.
             let light = Entity()
             light.components.set(DirectionalLightComponent(color: .white, intensity: 2000))
             stage.addChild(light)

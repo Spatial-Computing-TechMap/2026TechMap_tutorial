@@ -1,7 +1,18 @@
+//
+//  Planet.swift
+//  SolarSystem
+//
+//  Created by Saerom on 8/13/26.
+//
+
 import SwiftUI
 import RealityKit
 
-/// 행성 하나를 그리는 뷰입니다.
+/// The RealityView for a single planet.
+///
+/// Builds and updates a `PlanetEntity`, wires up the pinch-to-focus gesture
+/// on its selection ring, and places its info panel beside the planet once
+/// it's focused.
 struct Planet: View {
     @Environment(AppModel.self) private var model
 
@@ -24,9 +35,7 @@ struct Planet: View {
             guard let planetEntity else { return }
             planetEntity.update(configuration: configuration, animateUpdates: true)
 
-            guard let focusStage,
-                  let panel = attachments.entity(for: PlanetInfoPanel.attachmentID)
-            else { return }
+            guard let focusStage, let panel = attachments.entity(for: PlanetInfoPanel.attachmentID) else { return }
             planetEntity.setFocused(isFocused, stage: focusStage)
 
             if isFocused {
@@ -38,7 +47,6 @@ struct Planet: View {
             }
 
         } attachments: {
-            // 평범한 SwiftUI 뷰가 여기서 엔티티가 되어 3D 공간에 놓입니다.
             Attachment(id: PlanetInfoPanel.attachmentID) {
                 PlanetInfoPanel(
                     planetID: configuration.id,
@@ -50,9 +58,6 @@ struct Planet: View {
             }
         }
         .gesture(
-            // 어떤 엔티티든 받아 놓고, 우리가 붙인 꼬리표가 있는지로
-            // 걸러냅니다. 이래야 궤도선이나 배경을 집었을 때 반응하지
-            // 않습니다.
             SpatialTapGesture()
                 .targetedToAnyEntity()
                 .onEnded { value in

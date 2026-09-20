@@ -24,9 +24,9 @@
 
         @Steps {
             @Step {
-                2챕터에서 만든 `AppModel`에 몰입 공간 관련 상태를 더합니다.
+                3챕터에서 만든 `AppModel`에 몰입 공간 관련 상태를 더합니다.
                 `immersiveSpaceID`는 나중에 공간을 열고 닫을 때 쓰는 이름입니다.
-                @Code(name: "AppModel.swift", file: "04-01-AppModel.swift", previousFile: "03-03-AppModel.swift")
+                @Code(name: "AppModel.swift", file: "04-01-AppModel.swift", previousFile: "03-10-AppModel.swift")
 
                 `inTransition`이 없으면 전환이 끝나기 전에 버튼을 다시 눌렀을 때 공간이
                 두 번 열리거나 상태가 어긋납니다.
@@ -38,7 +38,8 @@
                 `Planet`에게 나눠 줍니다.
                 @Code(name: "SolarSystem.swift", file: "04-02-SolarSystem.swift")
 
-                `Starfield`와 `Sun`은 내려받은 파일에 들어 있습니다.
+                `Starfield`와 `Sun`은 내려받은 파일에 들어 있습니다. 머리 추적은 몰입
+                공간이 열려 있는 동안만 데이터가 오므로 여기서 시작하고 멈춥니다.
             }
 
             @Step {
@@ -90,8 +91,8 @@
             }
 
             @Step {
-                `init()`에서 `RotationSystem`을 등록합니다. 이 줄이 없으면 컴파일도 되고
-                크래시도 나지 않지만, 행성이 전혀 움직이지 않습니다.
+                `init()`에서 직접 만든 시스템 셋을 등록합니다. 이 줄들이 없으면 컴파일도
+                되고 크래시도 나지 않지만, 행성이 전혀 움직이지 않습니다.
                 @Code(name: "SolarSystemApp.swift", file: "04-07-SolarSystemApp.swift", previousFile: "04-06-SolarSystemApp.swift")
 
                 이제 앱을 실행해 창의 버튼으로 태양계를 열고, 행성을 바라보며 손가락을

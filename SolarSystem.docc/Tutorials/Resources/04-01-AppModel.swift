@@ -1,42 +1,42 @@
+//
+//  AppModel.swift
+//  SolarSystem
+//
+//  Created by Saerom on 8/12/26.
+//
+
 import RealityKit
 import SwiftUI
 
-/// 창과 몰입 공간이 함께 보는 앱 전역 상태입니다.
+/// Maintains app-wide state
 @MainActor
 @Observable
 class AppModel {
-
-    /// `ImmersiveSpace`를 열고 닫을 때 쓰는 이름입니다. `@main`에서
-    /// 선언하는 `ImmersiveSpace(id:)`와 반드시 같아야 합니다.
     let immersiveSpaceID = "SolarSystem"
 
-    /// 몰입 공간을 여닫는 일은 `await`라서 시간이 걸립니다. 그 사이에
-    /// 버튼이 또 눌리는 것을 막으려고 "전환 중"이라는 중간 상태를 둡니다.
-    enum ImmersiveSpaceState {
+    // MARK: - Solar System
+    enum ImmersiveSpaceState {  /// 전환 중에 버튼을 또 눌러서 예기치 못한 error 방지 위해 inTransition 추가
         case closed
         case inTransition
         case open
     }
     var immersiveSpaceState = ImmersiveSpaceState.closed
-    /// 몰입 공간이 실제로 화면에 올라와 있는지입니다.
     var isShowingSolar: Bool = false
 
-    /// 지금 확대해서 보고 있는 행성입니다. `nil`이면 아무것도 선택되지
-    /// 않은, 태양계 전체를 보는 상태입니다.
-    var focusedPlanetID: PlanetID? = nil
-
-    /// 지구만 달과 인공위성을 함께 거느리므로 설정을 따로 들고 있습니다.
-    /// 나머지 일곱 행성은 `PlanetEntity.Configuration`에 미리 정의되어 있습니다.
     var solarEarth: EarthEntity.Configuration = .solarEarthDefault
     var solarSatellite: SatelliteEntity.Configuration = .solarTelescopeDefault
     var solarMoon: SatelliteEntity.Configuration = .solarMoonDefault
 
-    /// 태양에서 가까운 순서대로 늘어놓은 여덟 행성입니다.
+    /// The eight planets that orbit the Sun in the solar system module,
+    /// ordered by distance from the Sun. Earth's entry stays driven by
+    /// `solarEarth`/`solarSatellite`/`solarMoon` so existing controls (like
+    /// the reduce-motion pause toggle) keep working. Every planet shares
+    /// the same `solarSunPosition`/`solarSystemTilt` so they all orbit
+    /// exactly where the Sun model is drawn, tilted for a look-down view.
     var solarPlanets: [PlanetEntity.Configuration] {
         let planets: [PlanetEntity.Configuration] = [
             .mercury,
             .venus,
-            // 지구만 팩토리 이름이 다릅니다. 달과 위성 설정을 함께 받습니다.
             .makeEarth(configuration: solarEarth, satellites: [solarSatellite], moon: solarMoon),
             .mars,
             .jupiter,
@@ -48,22 +48,80 @@ class AppModel {
             var configuration = $0
             configuration.sceneCenter = solarSunPosition
             configuration.presentationTilt = solarSystemTilt
-            // 한 행성이 선택되면 나머지는 전부 숨깁니다. 선택된 행성은
-            // 이미 포커스 무대로 옮겨져 있어서 이 설정에 영향받지 않습니다.
+            // While a planet is focused, every other planet hides -- the
+            // focused one already lives in the shared focus stage, so this
+            // only ever hides planets that aren't the focused one.
             configuration.isHidden = focusedPlanetID != nil
             return configuration
         }
     }
 
-    func focusNext() { focusedPlanetID = (focusedPlanetID ?? .neptune).next }
-    func focusPrevious() { focusedPlanetID = (focusedPlanetID ?? .mercury).previous }
-    func closeFocus() { focusedPlanetID = nil }
+    /// The planet currently zoomed in for a side-by-side view with its info
+    /// panel, if any.
+    var focusedPlanetID: PlanetID? = nil
 
-    // 태양이 놓이는 자리이자, 모든 행성 궤도의 중심입니다.
+    @ObservationIgnored let headTracker = HeadTracker()
+
+    /// How far in front of the viewer the focused planet and panel appear.
+    let focusDistance: Float = 1.3
+
+    /// Moves the focus stage right in front of the viewer, facing them, with
+    /// the planet and its info panel centered as one group in their view.
+    func placeFocusStageInFrontOfViewer(_ stage: Entity) {
+        guard let head = headTracker.headTransform() else { return }
+
+        let headPosition = SIMD3<Float>(head.columns.3.x, head.columns.3.y, head.columns.3.z)
+        // Flatten the gaze direction so the stage stays upright even when
+        // the viewer is looking up or down.
+        var forward = -SIMD3<Float>(head.columns.2.x, 0, head.columns.2.z)
+        guard length(forward) > 0.001 else { return }
+        forward = normalize(forward)
+
+        // Turn the stage so its +Z (the side attachments face) points back
+        // at the viewer.
+        let yaw = atan2(-forward.x, -forward.z)
+        let orientation = simd_quatf(angle: yaw, axis: [0, 1, 0])
+        let right = orientation.act([1, 0, 0])
+
+        // The planet sits at the stage origin and the panel to its right, so
+        // shift the stage left by half their combined width to center both.
+        let groupLeft = -PlanetEntity.focusDisplayRadius
+        let groupRight = PlanetEntity.focusPanelOffset + PlanetEntity.focusPanelHalfWidth
+        let groupCenter = (groupLeft + groupRight) / 2
+
+        stage.orientation = orientation
+        stage.position = headPosition + forward * focusDistance - right * groupCenter
+    }
+
+    func focusNext() {
+        focusedPlanetID = (focusedPlanetID ?? .neptune).next
+    }
+
+    func focusPrevious() {
+        focusedPlanetID = (focusedPlanetID ?? .mercury).previous
+    }
+
+    func closeFocus() {
+        focusedPlanetID = nil
+    }
+
+    // A fixed spot and size for the Sun -- also the point every planet's
+    // orbit is centered on (see `solarPlanets` above). Positioned below eye
+    // height and in front so the whole system reads as something you
+    // look down and out at, not something at eye level. These aren't
+    // derived from real units -- nudge them in Xcode if the Sun looks too
+    // small/large, or too close/far, next to the planets.
+    //
+    // The Sun sits farther back than it otherwise would because the orbits
+    // are spaced wide enough that planets never overlap (see
+    // PlanetEntity+Configuration.swift) -- Neptune orbits 7.8 m out,
+    // and this keeps its near edge in front of the viewer.
     let solarSunPosition: SIMD3<Float> = [0, 1.0, -9]
     let solarSunScale: Float = 2.0
 
-    // 궤도면 전체를 기울여, 태양계를 위에서 비스듬히 내려다보게 만듭니다.
-    let solarSystemTilt: simd_quatf = .init(
-        angle: Float(Angle.degrees(28).radians), axis: [1, 0, 0])
+    // Tilts every planet's orbital plane so the near edge dips down and the
+    // far edge rises, presenting the whole solar system at a raking,
+    // look-down angle from the start -- rather than relying on people
+    // happening to look downward themselves.
+    let solarSystemTilt: simd_quatf = .init(angle: Float(Angle.degrees(28).radians), axis: [1, 0, 0])
 }

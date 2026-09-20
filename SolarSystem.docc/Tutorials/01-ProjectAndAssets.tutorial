@@ -31,11 +31,12 @@
             @Step {
                 **Product Name**을 `SolarSystem`으로 지정합니다. **Initial Scene**은
                 `Window`, **Immersive Space Renderer**는 `RealityKit`, **Immersive Space**는
-                `Full`로 선택한 뒤 저장합니다.
+                `Mixed`로 선택합니다. 저장한 뒤 **TARGETS ▸ SolarSystem ▸ General ▸
+                Minimum Deployments**가 **visionOS 26.0 이상**인지 확인합니다.
                 @Image(source: "xcode-new-project-options.png", alt: "제품 이름과 초기 장면, 몰입 공간 방식을 고르는 화면")
 
-                프로젝트 설정의 **TARGETS ▸ SolarSystem ▸ General ▸ Minimum Deployments**가
-                **visionOS 26.0 이상**인지 확인합니다.
+                여기서 고른 값은 `Info.plist`의 초기 몰입 스타일일 뿐입니다. 실제 스타일은
+                4챕터에서 `immersionStyle(selection:in:)`으로 `.full`을 지정해 결정합니다.
             }
 
             @Step {

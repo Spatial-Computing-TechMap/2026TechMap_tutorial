@@ -83,8 +83,8 @@
                 돌아버려서 경로가 보이지 않습니다.
                 @Code(name: "PlanetEntity.swift", file: "02-06-PlanetEntity.swift", previousFile: "02-05-PlanetEntity.swift")
 
-                고리 메시를 만드는 `configureOrbitPath`는 내려받은 파일의
-                `PlanetEntity+OrbitPath.swift`에 들어 있습니다.
+                RealityKit에는 고리 모양 기본 도형이 없어서 `makeRingMesh`가 삼각형을
+                직접 쌓아 만듭니다. 앞뒤 양면을 모두 그려야 어느 쪽에서 봐도 보입니다.
             }
 
             @Step {
@@ -97,13 +97,13 @@
             }
 
             @Step {
-                모델을 불러와 가장 안쪽 `rotator`에 매답니다. 모델마다 만들어진 크기가
-                제각각이라, `visualBounds`로 반지름 1에 맞춰 감싼 뒤 원하는 크기를
-                곱합니다.
+                모델을 불러와 가장 안쪽 `rotator`에 매답니다. 지구만 달과 인공위성을
+                거느린 `EarthEntity`를 쓰고, 나머지 일곱은 이름이 같은 모델을 찾아
+                옵니다.
                 @Code(name: "PlanetEntity.swift", file: "02-08-PlanetEntity.swift", previousFile: "02-07-PlanetEntity.swift")
 
-                가장 넓은 쪽이 아니라 극-극(Y) 길이로 재는 이유는, 토성의 납작한 고리가
-                반지름으로 계산되어 본체를 쪼그라뜨리지 않게 하기 위해서입니다.
+                `normalizedToUnitRadius`가 극-극(Y) 길이로 재는 이유는, 토성의 납작한
+                고리가 반지름으로 계산되어 본체를 쪼그라뜨리지 않게 하기 위해서입니다.
             }
 
             @Step {

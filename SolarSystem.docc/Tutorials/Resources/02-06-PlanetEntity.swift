@@ -1,39 +1,57 @@
+//
+//  PlanetEntity.swift
+//  SolarSystem
+//
+//  Created by Saerom on 8/13/26.
+//
+
 import RealityKit
 import SwiftUI
 import UIKit
 import WorldAssets
 
-/// 행성 하나를 나타내는 엔티티입니다.
+/// An entity that represents one planet: it orbits the Sun on a visible
+/// path, spins on a tilted axis, and can itself be looked at and pinched to
+/// focus on it.
 ///
-/// 태양 주위를 공전하고, 기울어진 축을 중심으로 제자리에서 자전합니다.
-/// 회전이 두 가지라 한 엔티티로는 표현할 수 없어서, 역할마다 빈 엔티티를
-/// 하나씩 두고 부모-자식으로 엮습니다.
+/// Earth is special-cased to wrap the existing `EarthEntity` (which already
+/// manages its own tilt, spin, Moon, and satellites), while every other
+/// planet uses a procedurally generated placeholder sphere until a real
+/// textured asset is added to `WorldAssets`.
 class PlanetEntity: Entity {
 
-    // MARK: - 하위 엔티티
+    // MARK: - Sub-entities
 
-    /// 태양 주위를 돌아 공전을 만듭니다.
+    /// Rotates around the Sun to create the planet's revolution.
     private let orbitPivot = Entity()
-    /// 행성을 태양에서 떨어진 거리만큼 밀어냅니다.
+    /// Positions the planet at its distance from the Sun.
     private let radiusOffset = Entity()
-    /// 행성의 자전축 기울기를 담습니다.
+    /// Holds the planet's axial tilt. This is the entity that gets
+    /// reparented into the focus stage when someone selects this planet.
     private let equatorialPlane = Entity()
-    /// 기울어진 축을 중심으로 돌아 자전을 만듭니다.
+    /// Spins around the tilted axis to create the planet's rotation.
     private let rotator = Entity()
-
-    /// 이 행성의 궤도를 그리는 얇은 고리입니다. `orbitPivot`과 달리 절대
-    /// 돌지 않아서, 행성이 궤도 어디에 있든 경로 자체는 제자리에 남습니다.
+    /// A thin, static ring tracing this planet's orbit around the Sun --
+    /// unlike `orbitPivot`, this never rotates, so the path itself stays
+    /// visible regardless of where the planet currently is on it.
     private let orbitPath = Entity()
-
-    /// 눈에 보이는 모델입니다.
+    /// The visible model. For Earth this is the shared `EarthEntity`; for
+    /// every other planet it's a loaded or generated sphere.
     private var model: Entity = Entity()
 
-    // MARK: - 상태
+    /// Set only when this planet wraps an `EarthEntity`, so `update(...)`
+    /// can forward Earth-specific configuration to it.
+    private var earthEntity: EarthEntity?
 
-    // `id`가 아니라 `planetID`입니다. `Entity`가 이미 재정의할 수 없는
-    // `id: UInt64`를 갖고 있습니다.
+    // MARK: - Internal state
+
+    // Named `planetID`, not `id` -- `Entity` already declares a non-open
+    // `id: UInt64` that a subclass can't override.
     let planetID: PlanetID
     private var configuration: Configuration
+    private var isFocused = false
+
+    // MARK: - Initializers
 
     @MainActor required init() {
         planetID = .mercury
@@ -41,24 +59,85 @@ class PlanetEntity: Entity {
         super.init()
     }
 
-    // MARK: - 초기화
-
+    /// Creates a new planet entity with the specified configuration.
     init(configuration: Configuration) async {
         self.planetID = configuration.id
         self.configuration = configuration
         super.init()
 
-        // 공전 -> 거리 -> 축 기울기 -> 자전 순으로 계층을 쌓습니다.
-        // 부모의 변환이 자식에게 누적되므로, 각 엔티티는 자기 역할 하나만
-        // 맡으면서도 결과적으로 네 가지가 한꺼번에 적용됩니다.
+        // Build the orbit -> tilt -> spin hierarchy. `orbitPath` is a
+        // sibling of `orbitPivot`, not a child of it, so it stays fixed in
+        // place while the planet revolves around it.
         addChild(orbitPivot)
+        addChild(orbitPath)
         orbitPivot.addChild(radiusOffset)
         radiusOffset.addChild(equatorialPlane)
         equatorialPlane.addChild(rotator)
 
-        // `orbitPath`는 `orbitPivot`의 자식이 아니라 형제입니다. 자식으로
-        // 넣으면 궤도선까지 행성과 함께 돌아버립니다.
-        addChild(orbitPath)
         Self.configureOrbitPath(orbitPath, orbitRadius: configuration.orbitRadius)
+
+    }
+
+    /// Builds the thin, static ring that traces this planet's orbit around
+    /// the Sun, so the path itself is visible, not just implied by the
+    /// planet's motion.
+    private static func configureOrbitPath(_ path: Entity, orbitRadius: Float) {
+        let thickness: Float = 0.012
+        guard let mesh = try? makeRingMesh(
+            innerRadius: max(orbitRadius - thickness, 0),
+            outerRadius: orbitRadius,
+            segments: 96
+        ) else { return }
+
+        let material = UnlitMaterial(color: UIColor(white: 0.75, alpha: 1))
+        let visual = ModelEntity(mesh: mesh, materials: [material])
+        path.addChild(visual)
+
+        // The ring mesh faces +Z by default; lay it flat into the orbital
+        // (XZ) plane it's meant to trace.
+        path.orientation = .init(angle: -.pi / 2, axis: [1, 0, 0])
+    }
+
+    /// Builds a flat, ring-shaped (annulus) mesh facing +Z, since RealityKit
+    /// has no built-in torus/ring generator.
+    private static func makeRingMesh(innerRadius: Float, outerRadius: Float, segments: Int = 48) throws -> MeshResource {
+        var positions: [SIMD3<Float>] = []
+        var normals: [SIMD3<Float>] = []
+        var uvs: [SIMD2<Float>] = []
+
+        for i in 0...segments {
+            let angle = Float(i) / Float(segments) * 2.0 * .pi
+            let x = cos(angle)
+            let y = sin(angle)
+            positions.append([x * outerRadius, y * outerRadius, 0])
+            positions.append([x * innerRadius, y * innerRadius, 0])
+            normals.append([0, 0, 1])
+            normals.append([0, 0, 1])
+            let u = Float(i) / Float(segments)
+            uvs.append([u, 0])
+            uvs.append([u, 1])
+        }
+
+        var indices: [UInt32] = []
+        for i in 0..<segments {
+            let outerA = UInt32(i * 2)
+            let innerA = UInt32(i * 2 + 1)
+            let outerB = UInt32((i + 1) * 2)
+            let innerB = UInt32((i + 1) * 2 + 1)
+            // Front face.
+            indices.append(contentsOf: [outerA, innerA, outerB])
+            indices.append(contentsOf: [innerA, innerB, outerB])
+            // Back face, so the ring reads from both sides.
+            indices.append(contentsOf: [outerB, innerA, outerA])
+            indices.append(contentsOf: [outerB, innerB, innerA])
+        }
+
+        var descriptor = MeshDescriptor(name: "selectionRing")
+        descriptor.positions = MeshBuffers.Positions(positions)
+        descriptor.normals = MeshBuffers.Normals(normals)
+        descriptor.textureCoordinates = MeshBuffers.TextureCoordinates(uvs)
+        descriptor.primitives = .triangles(indices)
+
+        return try MeshResource.generate(from: [descriptor])
     }
 }
