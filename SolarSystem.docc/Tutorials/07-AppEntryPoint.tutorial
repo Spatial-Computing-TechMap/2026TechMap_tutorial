@@ -1,41 +1,52 @@
 @Tutorial(time: 5) {
-    @Intro(title: "앱 진입점 다시 조립하기") {
-        지금까지 `AppModel`, `ContentView`, `SolarSystem`, 그리고 이번에 손본
-        `PlanetInfoPanel`까지 여러 파일을 조금씩 고쳐 왔습니다. 이 모든 조각을
-        하나로 묶는 자리는 `@main`이 붙은 `SolarSystemApp`뿐입니다. 이 파일이
-        지금까지 어떻게 자라 왔는지 처음부터 다시 따라가며 정리합니다.
+    @Intro(title: "하나의 앱으로 연결하기") {
+        마지막으로 지금까지 만든 `AppModel`, `ContentView`, `SolarSystem`을 하나의
+        앱으로 연결합니다. `WindowGroup`과 `ImmersiveSpace`를 Scene으로 등록하고,
+        완전 몰입(`.full`) 스타일을 지정합니다.
 
         @Image(source: "app-solarsystem.png", alt: "우주 공간에 태양과 여덟 개의 행성이 궤도를 따라 늘어서 있는 화면")
     }
 
-    @Section(title: "WindowGroup에서 ImmersiveSpace까지") {
+    @Section(title: "WindowGroup과 ImmersiveSpace 등록하기") {
         @ContentAndMedia {
-            `SolarSystemApp`은 1챕터에서 창 하나로 시작했습니다. 몰입 공간과
-            공유 상태가 하나씩 늘어나면서 지금 모습이 됐습니다.
+            `@main`이 붙은 구조체는 앱에서 단 하나뿐입니다. 지금까지 만든 조각들은
+            서로를 직접 알지 못하고, 이 파일에서 처음으로 한자리에 모입니다.
+
+            창은 `ContentView`가, 몰입 공간은 `SolarSystem`이 그리고, 둘이 같은
+            `AppModel`을 나눠 보면서 서로의 상태를 따라갑니다.
         }
 
         @Steps {
             @Step {
-                1챕터에서는 `WindowGroup` 안에 `ContentView`만 있었습니다. 아직
-                몰입 공간이 등록되어 있지 않아서, `ContentView`의 버튼을 눌러도
-                아무 일도 일어나지 않습니다.
+                `SolarSystemApp.swift`에서 `@main`이 붙은 `App` 구조체를 만들고,
+                `WindowGroup` 안에 `ContentView`만 배치합니다. 이 상태에서는 아직
+                몰입 공간이 등록되어 있지 않아, 버튼을 눌러도 아무 일도 일어나지
+                않습니다.
                 @Code(name: "SolarSystemApp.swift", file: "01-01-SolarSystemApp.swift")
             }
 
             @Step {
-                창과 몰입 공간이 같은 상태를 봐야 하므로, `AppModel`을 `@State`로
-                갖고 `.environment(model)`로 두 Scene에 똑같이 넘겨줍니다.
-                `ImmersiveSpace(id:)`의 `id`는 `ContentView`가 `openImmersiveSpace(id:)`를
-                부를 때 쓰는 값과 반드시 같아야 합니다. `immersionStyle(selection:in:)`을
-                `.full`로 지정해 주변 현실을 완전히 가리는 몰입 스타일을 적용합니다.
-                @Code(name: "SolarSystemApp.swift", file: "01-03-SolarSystemApp.swift", previousFile: "01-01-SolarSystemApp.swift")
+                2챕터에서 만든 `AppModel`의 인스턴스를 `@State`로 보관하고,
+                `.environment(model)`로 `WindowGroup`의 콘텐츠에 주입합니다. 이렇게
+                해야 `ContentView`가 `@Environment(AppModel.self)`로 같은 인스턴스를
+                받아볼 수 있습니다.
+                @Code(name: "SolarSystemApp.swift", file: "07-01-SolarSystemApp.swift", previousFile: "01-01-SolarSystemApp.swift")
             }
 
             @Step {
-                3챕터에서 직접 만든 `RotationSystem`을 여기서 등록합니다. `init()`에서
-                한 번 등록해 두지 않으면, 나중에 아무리 `RotationComponent`를 붙여도
-                아무 효과가 없습니다. 지금 이 파일은 여기서 완성되고, 이후 챕터에서는
-                다시 손대지 않습니다.
+                `ImmersiveSpace` Scene을 추가하고, 그 안에 `SolarSystem()`을 배치한 뒤
+                똑같이 `model`을 주입합니다. 여기 쓴 `id`는 `ContentView`가
+                `openImmersiveSpace(id:)`를 부를 때 쓰는 값과 반드시 같아야 합니다.
+                마지막으로 `immersionStyle(selection:in:)`을 `.full`로 지정해, 주변
+                현실을 완전히 가리는 몰입 스타일을 적용합니다.
+                @Code(name: "SolarSystemApp.swift", file: "01-03-SolarSystemApp.swift", previousFile: "07-01-SolarSystemApp.swift")
+            }
+
+            @Step {
+                직접 만든 시스템은 앱이 시작할 때 한 번 등록해야 동작합니다.
+                `init()`에서 `RotationSystem`을 등록하지 않으면, 행성에 아무리
+                `RotationComponent`를 붙여도 돌지 않습니다. 이것으로 앱 전체가
+                연결되었습니다.
                 @Code(name: "SolarSystemApp.swift", file: "03-03-SolarSystemApp.swift", previousFile: "01-03-SolarSystemApp.swift")
             }
         }
