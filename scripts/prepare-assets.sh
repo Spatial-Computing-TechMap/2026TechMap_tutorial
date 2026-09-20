@@ -5,7 +5,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ASSET_DIR="$REPO_ROOT/SolarSystem.docc/Resources"
 ASSET_PATH="$ASSET_DIR/SolarSystem-Assets.zip"
 REPOSITORY="$(cat "$REPO_ROOT/repository.txt")"
-ASSET_URL="https://github.com/$REPOSITORY/releases/download/assets-v1/SolarSystem-Assets.zip"
+ASSET_URL="https://github.com/$REPOSITORY/releases/download/assets-v2/SolarSystem-Assets.zip"
 EXPECTED_SHA="$(awk '{print $1}' "$REPO_ROOT/assets.sha256")"
 TEMP_ASSET=""
 trap 'if [[ -n "$TEMP_ASSET" ]]; then rm -f "$TEMP_ASSET"; fi' EXIT

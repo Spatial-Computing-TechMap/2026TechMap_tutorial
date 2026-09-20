@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" role="img" aria-label="PlanetEntity의 하위 엔티티 계층도">
+  <style>
+    .box { fill: #1f2937; stroke: #4b5563; stroke-width: 1.5; rx: 10; }
+    .leaf { fill: #1e3a5f; stroke: #3b82f6; stroke-width: 1.5; rx: 10; }
+    .sib { fill: #3f2d1e; stroke: #b45309; stroke-width: 1.5; rx: 10; }
+    .name { font: 600 15px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #f9fafb; }
+    .role { font: 400 13px -apple-system, BlinkMacSystemFont, sans-serif; fill: #9ca3af; }
+    .link { stroke: #6b7280; stroke-width: 1.5; fill: none; }
+    .title { font: 600 14px -apple-system, BlinkMacSystemFont, sans-serif; fill: #6b7280; }
+  </style>
+  <rect x="0" y="0" width="640" height="400" fill="#111827"/>
+
+  <text class="title" x="24" y="30">PlanetEntity</text>
+
+  <path class="link" d="M 48 44 L 48 78 L 72 78"/>
+  <rect class="box" x="72" y="58" width="300" height="42"/>
+  <text class="name" x="88" y="77">orbitPivot</text>
+  <text class="role" x="88" y="93">태양 주위를 돌아 공전을 만듭니다</text>
+
+  <path class="link" d="M 96 100 L 96 134 L 120 134"/>
+  <rect class="box" x="120" y="114" width="300" height="42"/>
+  <text class="name" x="136" y="133">radiusOffset</text>
+  <text class="role" x="136" y="149">태양에서 떨어진 거리만큼 밀어냅니다</text>
+
+  <path class="link" d="M 144 156 L 144 190 L 168 190"/>
+  <rect class="box" x="168" y="170" width="300" height="42"/>
+  <text class="name" x="184" y="189">equatorialPlane</text>
+  <text class="role" x="184" y="205">자전축 기울기를 담습니다</text>
+
+  <path class="link" d="M 192 212 L 192 246 L 216 246"/>
+  <rect class="box" x="216" y="226" width="300" height="42"/>
+  <text class="name" x="232" y="245">rotator</text>
+  <text class="role" x="232" y="261">기울어진 축을 중심으로 자전합니다</text>
+
+  <path class="link" d="M 240 268 L 240 302 L 264 302"/>
+  <rect class="leaf" x="264" y="282" width="300" height="42"/>
+  <text class="name" x="280" y="301">model</text>
+  <text class="role" x="280" y="317">위 네 가지 변환을 모두 물려받습니다</text>
+
+  <path class="link" d="M 48 44 L 48 358 L 72 358"/>
+  <rect class="sib" x="72" y="338" width="300" height="42"/>
+  <text class="name" x="88" y="357">orbitPath</text>
+  <text class="role" x="88" y="373">형제이므로 함께 돌지 않습니다</text>
+</svg>

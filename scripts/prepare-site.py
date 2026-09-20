@@ -15,11 +15,17 @@ assert (archive / "downloads/org.spatialcomputingtechmap.solarsystemdocs/SolarSy
 <body><a href="{escape(target, quote=True)}">SolarSystem 튜토리얼 열기</a></body></html>
 """)
 
-# Preserve links shared before the six-chapter edition.
+# Preserve links shared before the four-chapter edition.
 for old, new in {
     "01-projectsetup": "01-projectandassets",
-    "02-placingplanets": "04-planetsinorbit",
-    "03-planetinfocards": "06-infopanelandheadplacement",
+    "02-placingplanets": "02-planetentity",
+    "03-planetinfocards": "03-focusandpanel",
+    "02-windowandspace": "04-appentrypoint",
+    "03-sunandlighting": "02-planetentity",
+    "04-planetsinorbit": "02-planetentity",
+    "05-taptofocus": "03-focusandpanel",
+    "06-infopanelandheadplacement": "03-focusandpanel",
+    "07-appentrypoint": "04-appentrypoint",
 }.items():
     destination = f"/{base_path}/tutorials/solarsystem/{new}/"
     assert (archive / f"tutorials/solarsystem/{new}/index.html").is_file()
