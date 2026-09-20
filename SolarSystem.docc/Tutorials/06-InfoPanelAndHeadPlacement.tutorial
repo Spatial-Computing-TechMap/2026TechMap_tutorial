@@ -242,52 +242,6 @@
         }
     }
 
-    @Section(title: "전체 구조 한눈에 보기") {
-        @ContentAndMedia {
-            지금까지 여러 파일을 조금씩 고쳐 왔습니다. 마지막으로 앱이 실제로 시작되는
-            지점부터 되짚어 보면서, 지금까지 만든 조각들이 어떻게 서로 연결되는지
-            한 번에 정리합니다.
-
-            `ContentView`의 버튼을 누르면 `ImmersiveSpace`가 열리고, 그 안의
-            `SolarSystem`이 실행됩니다. 지금까지 만든 조각들은 이 한 화면 안에서
-            이렇게 이어집니다.
-
-            - `AppModel.solarPlanets`가 여덟 행성의 `PlanetEntity.Configuration`을
-              내놓으면, `ForEach`가 행성 수만큼 `Planet`을 만듭니다.
-            - 행성을 핀치하면 `Planet`의 제스처가 `AppModel.focusedPlanetID`를
-              바꾸고, `AppModel.placeFocusStageInFrontOfViewer(_:)`가
-              `FocusStage`를 시선 앞으로 옮깁니다.
-            - `PlanetEntity.setFocused(_:stage:)`가 그 행성을 같은 자리로
-              옮기고, `Planet`의 `attachments`가 만든 `PlanetInfoPanel`이
-              옆에 나란히 뜹니다. 이번 챕터에서 더한 `spatialOverlay` 덕분에
-              그 패널 한쪽에는 행성 미리보기도 함께 보입니다.
-        }
-
-        @Steps {
-            @Step {
-                모든 것은 `@main`이 붙은 `SolarSystemApp`에서 시작합니다. `WindowGroup`은
-                `ContentView`를 띄우고, `ImmersiveSpace`는 `SolarSystem`을 띄웁니다.
-                `init()`에서 등록한 `RotationSystem`이 없으면, 뒤에서 붙인
-                `RotationComponent`는 아무 효과가 없습니다. 이 파일은 3챕터
-                이후로 바뀌지 않았습니다 — 지금 보시는 게 최종 모습입니다.
-                @Code(name: "SolarSystemApp.swift", file: "03-03-SolarSystemApp.swift")
-            }
-
-            @Step {
-                `ContentView`는 몰입 공간을 여닫는 버튼 하나가 전부입니다. 이 파일도
-                1챕터 이후로 바뀌지 않았습니다. 나머지 기능은 전부 `ImmersiveSpace`
-                안, 즉 `SolarSystem`과 그 아래 있는 뷰들이 담당합니다.
-                @Code(name: "ContentView.swift", file: "01-04-ContentView.swift")
-            }
-
-            @Step {
-                `SolarSystem.swift`가 이 모든 조각을 한 화면에 모읍니다. 왼쪽 설명을
-                읽으면서 아래 코드에서 각 부분을 찾아보세요.
-                @Code(name: "SolarSystem.swift", file: "05-07-SolarSystem.swift")
-            }
-        }
-    }
-
     @Assessments {
         @MultipleChoice {
             머리 방향 벡터의 `y` 값을 0으로 만드는 이유는 무엇일까요?

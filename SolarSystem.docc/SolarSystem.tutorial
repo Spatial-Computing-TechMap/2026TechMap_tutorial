@@ -54,6 +54,14 @@
         @TutorialReference(tutorial: "doc:06-InfoPanelAndHeadPlacement")
     }
 
+    @Chapter(name: "앱 진입점 다시 조립하기") {
+        지금까지 조금씩 고쳐 온 `SolarSystemApp`을 처음부터 다시 따라가며,
+        모든 조각이 어떻게 하나의 앱으로 묶이는지 정리합니다.
+
+        @Image(source: "app-solarsystem.png", alt: "우주 공간에 태양과 여덟 개의 행성이 궤도를 따라 늘어서 있는 화면")
+        @TutorialReference(tutorial: "doc:07-AppEntryPoint")
+    }
+
     @Resources(title: "자료 내려받기") {
         튜토리얼을 따라 하는 데 필요한 파일과, 더 깊이 알아볼 때 도움이 되는 자료입니다.
         <doc:01-ProjectAndAssets> 페이지 상단의 **Project files** 다운로드 버튼에서 `SolarSystem-Assets.zip`을 내려받으세요.
