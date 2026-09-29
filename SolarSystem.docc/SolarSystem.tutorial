@@ -9,8 +9,6 @@
 
         문구나 설정값만 들어 있어 새로 배울 개념이 없는 파일은 직접 쓰지 않고
         **Project files**로 함께 내려받습니다.
-
-        @Image(source: "app-solarsystem.png", alt: "우주 공간에 태양과 여덟 개의 행성이 궤도를 따라 늘어서 있는 화면")
     }
 
     @Chapter(name: "프로젝트와 에셋 준비하기") {

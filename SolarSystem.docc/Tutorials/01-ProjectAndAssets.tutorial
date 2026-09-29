@@ -5,8 +5,6 @@
 
         이 챕터에서는 코드를 쓰지 않습니다. 하지만 다음 챕터부터 쓰는 모든 코드가 여기서
         연결한 에셋 이름을 그대로 참조하므로, 반드시 먼저 끝내야 합니다.
-
-        @Image(source: "diagram-assets-folder.svg", alt: "여러 개의 행성 모델 파일이 폴더에 담겨 있는 모습")
     }
 
     @Section(title: "새 visionOS 앱 만들기") {
