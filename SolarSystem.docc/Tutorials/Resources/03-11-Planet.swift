@@ -1,18 +1,6 @@
-//
-//  Planet.swift
-//  SolarSystem
-//
-//  Created by Saerom on 8/13/26.
-//
-
 import SwiftUI
 import RealityKit
 
-/// The RealityView for a single planet.
-///
-/// Builds and updates a `PlanetEntity`, wires up the pinch-to-focus gesture
-/// on its selection ring, and places its info panel beside the planet once
-/// it's focused.
 struct Planet: View {
     @Environment(AppModel.self) private var model
 
@@ -62,9 +50,6 @@ struct Planet: View {
                 .targetedToAnyEntity()
                 .onEnded { value in
                     guard value.entity.components[PlanetSelectionComponent.self] != nil else { return }
-                    // Only move the stage when focus first opens, so
-                    // Previous/Next keep planets in the same spot. Move it
-                    // before focusing, so the planet flies straight there.
                     if model.focusedPlanetID == nil, let focusStage {
                         model.placeFocusStageInFrontOfViewer(focusStage)
                     }

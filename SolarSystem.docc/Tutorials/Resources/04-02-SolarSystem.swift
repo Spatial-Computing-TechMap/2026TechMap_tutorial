@@ -1,28 +1,9 @@
-//
-//  SolarSystem.swift
-//  SolarSystem
-//
-//  Created by Saerom on 8/13/26.
-//
-/// 태양 + 행성들 ZStack으로 쌓는곳
-
-
-/*
-See the LICENSE.txt file for this sample’s licensing information.
-
-Abstract:
-The model content for the solar system module.
-*/
-
 import SwiftUI
 import RealityKit
 
-/// The model content for the solar system module.
 struct SolarSystem: View {
     @Environment(AppModel.self) private var model
 
-    /// The shared anchor that a focused planet and its info panel animate
-    /// into. Created once by `FocusStage` and handed to every `Planet`.
     @State private var focusStage: Entity?
 
     var body: some View {
