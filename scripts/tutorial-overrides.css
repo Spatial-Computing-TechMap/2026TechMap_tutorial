@@ -1,0 +1,68 @@
+/*
+ * Presentation overrides for the generated tutorial: Korean line breaking, and
+ * the size of the section intro (@ContentAndMedia) media column.
+ *
+ * Injected into every generated page by scripts/prepare-site.py. DocC loads
+ * its own stylesheets at runtime, after this one, so the cascade order is not
+ * ours to control — hence !important throughout.
+ */
+
+/* ---- break Korean lines between words, not inside them ---- */
+/* CSS breaks CJK text between any two characters, so Korean 어절 end up split
+   across lines. keep-all breaks at spaces instead. It also makes a long
+   unbreakable run (a URL, a long identifier) overflow its column, so pair it
+   with overflow-wrap, which only breaks a word that cannot fit on a line of
+   its own. */
+#app :is(h1, h2, h3, h4, h5, h6, p, li, dt, dd, figcaption, blockquote, caption) {
+    word-break: keep-all !important;
+    overflow-wrap: break-word !important;
+}
+
+/* docc-render also plants a <wbr> at every camelCase hump inside an inline code
+   span, which is what splits `RotationComponent` into Rotation / Component —
+   and it fires even when the whole identifier would fit on the next line. Drop
+   those so an identifier wraps as one word. The handful that are too long for a
+   step box to begin with (`update(configuration:animateUpdates:)` and friends)
+   fall back to overflow-wrap above: an arbitrary break rather than a break at
+   the hump, but never an overflow. */
+#app :is(p, li, dt, dd, figcaption, blockquote, caption) wbr {
+    display: none !important;
+}
+
+/*
+ * swift-docc-render lays a section intro out as a 980px row split 6/6, and
+ * caps the image with `width: auto; object-fit: scale-down`, so a diagram
+ * never grows past its own intrinsic size and is boxed into ~410px.
+ *
+ * Here the media column takes 7/12 instead of 6/12 on large screens and the
+ * image fills it. `height: auto` keeps the original aspect ratio.
+ */
+
+/* ---- give the media column more of the row ---- */
+/* 1250px is where docc-render drops the row from 980px to 692px; below that
+   there is not enough left for the text column to give any away. */
+@media only screen and (min-width: 1251px) {
+    #app .tutorial .intro > .col.left {
+        flex-basis: 41.6666666667% !important;
+        max-width: 41.6666666667% !important;
+    }
+
+    #app .tutorial .intro > .col.right {
+        flex-basis: 58.3333333333% !important;
+        max-width: 58.3333333333% !important;
+    }
+}
+
+/* ---- let the image fill whatever column it ends up in ---- */
+#app .tutorial .intro .media .asset {
+    padding: 0 !important;
+}
+
+#app .tutorial .intro .media img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    /* the default min-height stretches a wide image on a narrow screen */
+    min-height: 0 !important;
+    object-fit: contain !important;
+}
