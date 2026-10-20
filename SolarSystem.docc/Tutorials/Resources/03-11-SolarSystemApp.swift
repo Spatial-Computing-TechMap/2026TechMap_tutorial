@@ -9,6 +9,12 @@ struct SolarSystemApp: App {
 
     @State private var solarImmersionStyle: ImmersionStyle = .full
 
+    init() {
+        RotationSystem.registerSystem()
+        TraceSystem.registerSystem()
+        SunPositionSystem.registerSystem()
+    }
+
     var body: some SwiftUI.Scene {
         WindowGroup {
             SwitchWindows()
@@ -17,7 +23,7 @@ struct SolarSystemApp: App {
         .windowStyle(.plain)
 
         ImmersiveSpace(id: model.immersiveSpaceID) {
-            SolarSystem()
+            ImmersiveSolarSystem()
                 .environment(model)
         }
         .immersionStyle(selection: $solarImmersionStyle, in: .full)

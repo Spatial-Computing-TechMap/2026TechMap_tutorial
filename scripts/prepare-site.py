@@ -10,7 +10,13 @@ overrides = Path(__file__).parent / "tutorial-overrides.css"
 target = f"/{base_path}/tutorials/solarsystem/"
 assert (archive / "tutorials/solarsystem/index.html").is_file()
 assert (archive / "tutorials/solarsystem/01-projectandassets/index.html").is_file()
-assert (archive / "downloads/org.spatialcomputingtechmap.solarsystemdocs/SolarSystem-Assets.zip").is_file()
+assert (archive / "tutorials/solarsystem/02-spatiallayout/index.html").is_file()
+assert (archive / "tutorials/solarsystem/03-windowandimmersivespace/index.html").is_file()
+# SolarSystem-Assets.zip is linked straight from its release, not published
+# here: at 305 MB it would double the size of the site for a file GitHub
+# already serves.
+downloads = archive / "downloads/org.spatialcomputingtechmap.solarsystemdocs"
+assert (downloads / "SolarSystem-StartingProject.zip").is_file()
 (archive / ".nojekyll").touch()
 
 # DocC only takes custom CSS through a custom header template, which is opt-in
@@ -74,17 +80,23 @@ assert stamps > 0, "no image references to stamp"
 <body><a href="{escape(target, quote=True)}">SolarSystem 튜토리얼 열기</a></body></html>
 """)
 
-# Preserve links shared before the four-chapter edition.
+# Preserve links shared before the three-chapter edition.
 for old, new in {
     "01-projectsetup": "01-projectandassets",
-    "02-placingplanets": "02-planetentity",
-    "03-planetinfocards": "03-focusandpanel",
-    "02-windowandspace": "04-appentrypoint",
-    "03-sunandlighting": "02-planetentity",
-    "04-planetsinorbit": "02-planetentity",
-    "05-taptofocus": "03-focusandpanel",
-    "06-infopanelandheadplacement": "03-focusandpanel",
-    "07-appentrypoint": "04-appentrypoint",
+    "02-placingplanets": "02-spatiallayout",
+    "02-planetentity": "02-spatiallayout",
+    "03-planetinfocards": "02-spatiallayout",
+    "03-focusandpanel": "02-spatiallayout",
+    "03-sunandlighting": "02-spatiallayout",
+    "04-planetsinorbit": "02-spatiallayout",
+    "05-taptofocus": "02-spatiallayout",
+    "06-infopanelandheadplacement": "02-spatiallayout",
+    "07-spatiallayout": "02-spatiallayout",
+    "01-spatiallayout": "02-spatiallayout",
+    "02-windowandspace": "03-windowandimmersivespace",
+    "02-windowandimmersivespace": "03-windowandimmersivespace",
+    "04-appentrypoint": "03-windowandimmersivespace",
+    "07-appentrypoint": "03-windowandimmersivespace",
 }.items():
     destination = f"/{base_path}/tutorials/solarsystem/{new}/"
     assert (archive / f"tutorials/solarsystem/{new}/index.html").is_file()

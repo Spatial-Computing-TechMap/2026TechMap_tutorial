@@ -7,8 +7,6 @@ struct SolarSystemApp: App {
 
     @State private var model = AppModel()
 
-    @State private var solarImmersionStyle: ImmersionStyle = .full
-
     init() {
         RotationSystem.registerSystem()
         TraceSystem.registerSystem()
@@ -21,11 +19,5 @@ struct SolarSystemApp: App {
                 .environment(model)
         }
         .windowStyle(.plain)
-
-        ImmersiveSpace(id: model.immersiveSpaceID) {
-            SolarSystem()
-                .environment(model)
-        }
-        .immersionStyle(selection: $solarImmersionStyle, in: .full)
      }
 }
